@@ -1,0 +1,11 @@
+package com.findjobs.back.repository;
+
+import com.findjobs.back.domain.Sector;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+public interface SectorRepository extends JpaRepository<Sector, UUID> {
+    Optional<Sector> findByName(String name);
+}
