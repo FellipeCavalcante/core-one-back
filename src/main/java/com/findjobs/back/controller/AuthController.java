@@ -1,5 +1,6 @@
 package com.findjobs.back.controller;
 
+import com.findjobs.back.domain.SubSector;
 import com.findjobs.back.domain.enums.UserType;
 import com.findjobs.back.dto.users.CreateUserRequestDTO;
 import com.findjobs.back.dto.users.CreateUserResponseDTO;
@@ -8,6 +9,7 @@ import com.findjobs.back.dto.users.LoginResponseDTO;
 import com.findjobs.back.errors.LoginRequestException;
 import com.findjobs.back.mapper.UserMapper;
 import com.findjobs.back.security.JwtService;
+import com.findjobs.back.service.SubSectorService;
 import com.findjobs.back.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("api/v1/auth")
 @RequiredArgsConstructor
@@ -29,12 +33,14 @@ public class AuthController {
     private final UserMapper userMapper;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final SubSectorService subSectorService;
 
     @PostMapping("/register")
     public ResponseEntity<CreateUserResponseDTO> register(@RequestBody CreateUserRequestDTO request) {
         System.out.println("Request received: " + request.toString());
         System.out.println("Password received: " + request.getPassword());
         System.out.println("Email received: " + request.getEmail());
+        System.out.println("Sub Sector: " + request.getSubSector());
 
         if (request.getPassword() == null) {
             return ResponseEntity.badRequest().body(null);
@@ -45,6 +51,11 @@ public class AuthController {
         var user = userMapper.toUser(request);
         user.setType(userType);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        if (request.getSubSector() != null) {
+            Optional<SubSector> subSectorOptional = subSectorService.findById(request.getSubSector());
+            subSectorOptional.ifPresent(user::setSubSector);
+        }
 
         var userSaved = service.save(user);
         var createUserResponse = userMapper.toCreateResponse(userSaved);

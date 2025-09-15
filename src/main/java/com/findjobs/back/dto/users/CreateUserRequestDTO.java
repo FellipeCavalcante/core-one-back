@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class CreateUserRequestDTO {
     @NotBlank(message = "The field 'name' is required")
@@ -16,4 +18,6 @@ public class CreateUserRequestDTO {
     private String email;
     @NotNull(message = "The field 'type' is required")
     private String type;
+    @NotNull(message = "The field 'subSector' is required")
+    private UUID subSector;
 }

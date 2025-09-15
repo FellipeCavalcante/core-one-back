@@ -1,6 +1,5 @@
 package com.findjobs.back.dto.users;
 
-import com.findjobs.back.domain.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +15,7 @@ public class CreateUserResponseDTO {
     private String name;
     private String email;
     private String type;
+    private UUID subSector;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 }
