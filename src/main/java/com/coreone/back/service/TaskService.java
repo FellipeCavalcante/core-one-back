@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -58,4 +59,12 @@ public class TaskService {
         return savedTask;
     }
 
+    public List<Task> findAll() {
+        return taskRepository.findAll();
+    }
+
+    public Task getById(UUID id) {
+        var task = taskRepository.findById(id).orElseThrow();
+        return task;
+    }
 }
