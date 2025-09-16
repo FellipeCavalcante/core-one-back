@@ -1,10 +1,7 @@
 package com.findjobs.back.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,4 +28,7 @@ public class SubSector {
 
     @OneToMany(mappedBy = "subSector")
     private List<User> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "subSector", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TaskSubSector> taskLinks = new ArrayList<>();
 }
