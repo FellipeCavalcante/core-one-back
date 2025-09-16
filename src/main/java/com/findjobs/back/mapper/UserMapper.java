@@ -4,6 +4,7 @@ import com.findjobs.back.domain.SubSector;
 import com.findjobs.back.domain.User;
 import com.findjobs.back.dto.users.CreateUserRequestDTO;
 import com.findjobs.back.dto.users.CreateUserResponseDTO;
+import com.findjobs.back.dto.users.GetUserResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -26,6 +27,9 @@ public interface UserMapper {
     // Entity -> DTO
     @Mapping(target = "subSector", source = "subSector.id")
     CreateUserResponseDTO toCreateResponse(User user);
+
+    @Mapping(target = "subSector", source = "subSector.id")
+    GetUserResponse toGetUserResponse(User user);
 
     @Named("mapSubSector")
     default SubSector mapSubSector(UUID subSectorId) {
