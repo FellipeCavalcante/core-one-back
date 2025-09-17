@@ -29,4 +29,8 @@ public class LogService {
     public List<Log> findAll() {
         return repository.findAllWithUser();
     }
+
+    public Log findById(UUID id) {
+        return repository.findById(id).orElse(null);
+    }
 }

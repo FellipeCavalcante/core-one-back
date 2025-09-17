@@ -8,13 +8,11 @@ import com.coreone.back.dto.users.LoginRequestDTO;
 import com.coreone.back.dto.users.LoginResponseDTO;
 import com.coreone.back.errors.LoginRequestException;
 import com.coreone.back.mapper.UserMapper;
-import com.coreone.back.security.JwtService;
 import com.coreone.back.service.SubSectorService;
 import com.coreone.back.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,8 +29,6 @@ public class AuthController {
     private final UserService service;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
     private final SubSectorService subSectorService;
 
     @PostMapping("/register")
