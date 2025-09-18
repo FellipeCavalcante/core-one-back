@@ -16,8 +16,5 @@ public class CreateUserRequestDTO {
     @NotBlank(message = "The field 'email' is required")
     @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,10}$", message = "The e-mail is not valid")
     private String email;
-    @NotNull(message = "The field 'type' is required")
     private String type;
-    @NotNull(message = "The field 'subSector' is required")
-    private UUID subSector;
 }

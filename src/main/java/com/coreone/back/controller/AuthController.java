@@ -36,7 +36,6 @@ public class AuthController {
         System.out.println("Request received: " + request.toString());
         System.out.println("Password received: " + request.getPassword());
         System.out.println("Email received: " + request.getEmail());
-        System.out.println("Sub Sector: " + request.getSubSector());
 
         if (request.getPassword() == null) {
             return ResponseEntity.badRequest().body(null);
@@ -48,10 +47,6 @@ public class AuthController {
         user.setType(userType);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        if (request.getSubSector() != null) {
-            Optional<SubSector> subSectorOptional = subSectorService.findById(request.getSubSector());
-            subSectorOptional.ifPresent(user::setSubSector);
-        }
 
         var userSaved = service.save(user);
         var createUserResponse = userMapper.toCreateResponse(userSaved);

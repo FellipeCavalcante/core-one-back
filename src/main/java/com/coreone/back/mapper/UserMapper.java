@@ -21,11 +21,9 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", expression = "java(new java.sql.Timestamp(System.currentTimeMillis()))")
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "type", ignore = true)
-    @Mapping(target = "subSector", source = "subSector", qualifiedByName = "mapSubSector")
     User toUser(CreateUserRequestDTO dto);
 
     // Entity -> DTO
-    @Mapping(target = "subSector", source = "subSector.id")
     CreateUserResponseDTO toCreateResponse(User user);
 
     @Mapping(target = "subSector", source = "subSector.id")

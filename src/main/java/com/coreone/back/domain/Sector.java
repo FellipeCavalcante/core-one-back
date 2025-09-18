@@ -24,4 +24,8 @@ public class Sector {
 
     @OneToMany(mappedBy = "sector", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubSector> subSectors = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "enterprise_id")
+    private Enterprise enterprise;
 }

@@ -34,10 +34,13 @@ public class User implements UserDetails {
     private UserType type;
 
     @ManyToOne
+    @JoinColumn(name = "enterprise_id")
+    private Enterprise enterprise;
+
+    @ManyToOne
     @JoinColumn(name = "sub_sector_id")
     private SubSector subSector;
 
-    // Relação com TaskMember
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TaskMember> taskMemberships = new HashSet<>();
 

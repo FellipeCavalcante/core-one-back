@@ -15,7 +15,6 @@ public class CreateUserResponseDTO {
     private String name;
     private String email;
     private String type;
-    private UUID subSector;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 }
