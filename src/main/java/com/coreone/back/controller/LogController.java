@@ -44,4 +44,6 @@ public class LogController {
 
         return ResponseEntity.ok(response);
     }
+
+    // rotas para filtrar os tipos de logs
 }
