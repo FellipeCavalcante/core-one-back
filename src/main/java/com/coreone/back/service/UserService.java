@@ -98,4 +98,10 @@ public class UserService {
                     throw new EmailAlreadyExistsException("E-mail já está em uso: " + email);
                 });
     }
+
+    public User findById(UUID id) {
+        return repository.findById(id).orElseThrow(
+                () -> new NotFoundException("User not found")
+        );
+    }
 }

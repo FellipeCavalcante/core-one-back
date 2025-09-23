@@ -2,9 +2,11 @@ package com.coreone.back.mapper;
 
 import com.coreone.back.domain.Enterprise;
 import com.coreone.back.domain.Sector;
+import com.coreone.back.domain.SubSector;
 import com.coreone.back.dto.sector.CreateSectorRequestDTO;
 import com.coreone.back.dto.sector.CreateSectorResponseDTO;
 import com.coreone.back.dto.sector.GetSectorResponse;
+import com.coreone.back.dto.sector.GetSubSectorResponseBySector;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -23,6 +25,8 @@ public interface SectorMapper {
     CreateSectorResponseDTO toCreateSectorResponseDTO(Sector sector);
 
     GetSectorResponse toGetSectorResponse(Sector sector);
+
+    GetSubSectorResponseBySector toGetSubSectorResponse(SubSector subSector);
 
     default Enterprise map(UUID enterpriseId) {
         if (enterpriseId == null) {

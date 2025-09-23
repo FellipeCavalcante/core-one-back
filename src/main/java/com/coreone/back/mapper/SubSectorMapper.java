@@ -2,8 +2,7 @@ package com.coreone.back.mapper;
 
 import com.coreone.back.domain.Sector;
 import com.coreone.back.domain.SubSector;
-import com.coreone.back.dto.subSector.CreateSubSectorRequestDTO;
-import com.coreone.back.dto.subSector.CreateSubSectorResponseDTO;
+import com.coreone.back.dto.subSector.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -21,6 +20,12 @@ public interface SubSectorMapper {
     // Entity -> DTO
     @Mapping(target = "sector", source = "sector.id")
     CreateSubSectorResponseDTO toCreateSubSectorResponseDTO(SubSector subSector);
+
+    GetSubSectorResponse toGetSubSectorResponse(SubSector subSector);
+
+    GetUserResponseBySubSector toGetSubSectorResponseBySubSector(SubSector subSector);
+
+    GetTaskResponseBySubSector toGetTaskResponseBySubSector(SubSector subSector);
 
     default Sector map(UUID id) {
         if (id == null) return null;

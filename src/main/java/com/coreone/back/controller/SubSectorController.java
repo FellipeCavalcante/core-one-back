@@ -2,15 +2,17 @@ package com.coreone.back.controller;
 
 import com.coreone.back.dto.subSector.CreateSubSectorRequestDTO;
 import com.coreone.back.dto.subSector.CreateSubSectorResponseDTO;
+import com.coreone.back.dto.subSector.GetSubSectorResponse;
 import com.coreone.back.mapper.SubSectorMapper;
 import com.coreone.back.service.SubSectorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/subSector")
@@ -28,5 +30,20 @@ public class SubSectorController {
         var response = mapper.toCreateSubSectorResponseDTO(subSectorSaved);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/by-sector/{id}")
+    public ResponseEntity<List<GetSubSectorResponse>> getBySector(@PathVariable UUID id) {
+        var response = service.listAllSectorsSubSectors(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/add-user/{subSectorId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<String> addUser(@PathVariable UUID subSectorId, @RequestBody UUID userId) {
+        var response = service.addUserToSubSector(subSectorId, userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

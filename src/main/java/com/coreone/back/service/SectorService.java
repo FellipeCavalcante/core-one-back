@@ -1,8 +1,10 @@
 package com.coreone.back.service;
 
+import com.coreone.back.domain.Sector;
 import com.coreone.back.dto.sector.CreateSectorRequestDTO;
 import com.coreone.back.dto.sector.CreateSectorResponseDTO;
 import com.coreone.back.dto.sector.GetSectorResponse;
+import com.coreone.back.errors.NotFoundException;
 import com.coreone.back.errors.sectorlAlreadyExistsException;
 import com.coreone.back.mapper.SectorMapper;
 import com.coreone.back.repository.SectorRepository;
@@ -52,5 +54,11 @@ public class SectorService {
                 .collect(Collectors.toList());
 
         return response;
+    }
+
+    public Sector findById(UUID id) {
+        return repository.findById(id).orElseThrow(
+                () -> new NotFoundException("Sector not found!")
+        );
     }
 }
