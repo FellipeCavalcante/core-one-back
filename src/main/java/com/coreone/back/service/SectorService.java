@@ -1,13 +1,17 @@
 package com.coreone.back.service;
 
-import com.coreone.back.domain.Sector;
 import com.coreone.back.dto.sector.CreateSectorRequestDTO;
 import com.coreone.back.dto.sector.CreateSectorResponseDTO;
+import com.coreone.back.dto.sector.GetSectorResponse;
 import com.coreone.back.errors.sectorlAlreadyExistsException;
 import com.coreone.back.mapper.SectorMapper;
 import com.coreone.back.repository.SectorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,5 +40,17 @@ public class SectorService {
                 .ifPresent(existedSector -> {
                     throw new sectorlAlreadyExistsException("Sector " + name + " already exists");
                 });
+    }
+
+    public List<GetSectorResponse> listAllEnterpriseSectors(UUID id) {
+        var enterprise = enterpriseService.findById(id);
+
+        var sectors = repository.findAllByEnterpriseId(enterprise.getId());
+
+        List<GetSectorResponse> response = sectors.stream()
+                .map(mapper::toGetSectorResponse)
+                .collect(Collectors.toList());
+
+        return response;
     }
 }
