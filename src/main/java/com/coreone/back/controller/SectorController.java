@@ -18,16 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SectorController {
 
-    private final SectorService sectorService;
-    private final SectorMapper sectorMapper;
+    private final SectorService service;
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<CreateSectorResponseDTO> create(@RequestBody CreateSectorRequestDTO request) {
-        var sector = sectorMapper.toSector(request);
-        var sectorSaved = sectorService.save(sector);
 
-        var response = sectorMapper.toCreateSectorResponseDTO(sectorSaved);
+        var response = service.save(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

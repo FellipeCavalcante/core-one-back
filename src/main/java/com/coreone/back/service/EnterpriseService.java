@@ -4,6 +4,7 @@ import com.coreone.back.domain.Enterprise;
 import com.coreone.back.domain.enums.UserType;
 import com.coreone.back.dto.enterprise.CreateEnterpriseRequestDTO;
 import com.coreone.back.dto.enterprise.CreateEnterpriseResponseDTO;
+import com.coreone.back.errors.NotFoundException;
 import com.coreone.back.repository.EnterpriseRepository;
 import com.coreone.back.repository.UserRepository;
 import com.coreone.back.security.JwtService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -64,5 +66,11 @@ public class EnterpriseService {
 
     public List<Enterprise> getAll() {
         return repository.findAll();
+    }
+
+    public Enterprise findById(UUID id) {
+        return repository.findById(id).orElseThrow(
+                () -> new NotFoundException("Enterprise not found")
+        );
     }
 }

@@ -51,7 +51,6 @@ public class TaskService {
             }
         }
 
-        // cria log
         var taskCreatedBy = userRepository.findById(request.getCreatorId()).orElseThrow();
         var newValue = "title: " + request.getTitle() + " description: " + request.getDescription() + ".";
         logService.create(taskCreatedBy, "CREATE_TASK", "TASK", savedTask.getId(), newValue);

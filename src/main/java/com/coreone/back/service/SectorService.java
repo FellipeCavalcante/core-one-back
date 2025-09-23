@@ -1,7 +1,10 @@
 package com.coreone.back.service;
 
 import com.coreone.back.domain.Sector;
+import com.coreone.back.dto.sector.CreateSectorRequestDTO;
+import com.coreone.back.dto.sector.CreateSectorResponseDTO;
 import com.coreone.back.errors.sectorlAlreadyExistsException;
+import com.coreone.back.mapper.SectorMapper;
 import com.coreone.back.repository.SectorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,11 +13,22 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SectorService {
     private final SectorRepository repository;
+    private final SectorMapper mapper;
+    private final EnterpriseService enterpriseService;
 
-    public Sector save(Sector sector) {
+    public CreateSectorResponseDTO save(CreateSectorRequestDTO sector) {
         assertSectorDosNotExists(sector.getName());
+
+        var enterprise = enterpriseService.findById(sector.getEnterprise());
+
         sector.setName(sector.getName().toUpperCase());
-        return repository.save(sector);
+
+        var sectorMapped = mapper.toSector(sector);
+        sectorMapped.setEnterprise(enterprise);
+
+        var sectorSaved = repository.save(sectorMapped);
+
+        return mapper.toCreateSectorResponseDTO(sectorSaved);
     }
 
     public void assertSectorDosNotExists(String name) {

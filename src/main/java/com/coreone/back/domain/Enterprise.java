@@ -17,7 +17,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Enterprise {
+public class
+Enterprise {
 
     @Id
     @GeneratedValue
