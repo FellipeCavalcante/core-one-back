@@ -10,6 +10,7 @@ import com.coreone.back.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,14 @@ public class TaskController {
         var tasks = service.getById(id);
 
         var response = mapper.toGetTaskResponse(tasks);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<String> delete(@PathVariable UUID id) {
+        var response = service.delete(id);
 
         return ResponseEntity.ok(response);
     }

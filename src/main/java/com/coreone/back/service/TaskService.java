@@ -66,4 +66,12 @@ public class TaskService {
         var task = taskRepository.findById(id).orElseThrow();
         return task;
     }
+
+    public String delete(UUID id) {
+        var task = getById(id);
+
+        taskRepository.delete(task);
+
+        return "Deleted task: " + task.getTitle();
+    }
 }
