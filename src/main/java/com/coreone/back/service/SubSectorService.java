@@ -53,4 +53,12 @@ public class SubSectorService {
 
         return "Usuário " + user.getUsername() + " cadastrado com sucesso!";
     }
+
+    public String delete(UUID id) {
+        var subSector = findById(id);
+
+        repository.deleteById(subSector.getId());
+
+        return "SubSector " + subSector.getId() + " deleted!";
+    }
 }

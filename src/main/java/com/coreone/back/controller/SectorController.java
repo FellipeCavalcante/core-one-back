@@ -39,6 +39,7 @@ public class SectorController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<String> delete(@PathVariable UUID id) {
         var response = service.delete(id);
 

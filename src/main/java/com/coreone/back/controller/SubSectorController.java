@@ -46,4 +46,12 @@ public class SubSectorController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<String> deleteSubSector(@PathVariable UUID id) {
+        var response = service.delete(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
