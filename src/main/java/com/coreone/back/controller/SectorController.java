@@ -5,6 +5,7 @@ import com.coreone.back.dto.sector.CreateSectorResponseDTO;
 import com.coreone.back.dto.sector.GetSectorResponse;
 import com.coreone.back.mapper.SectorMapper;
 import com.coreone.back.service.SectorService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,13 @@ public class SectorController {
     @GetMapping("/by-enterprise/{id}")
     public ResponseEntity<List<GetSectorResponse>> getByEnterprise(@PathVariable UUID id) {
         var response = service.listAllEnterpriseSectors(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable UUID id) {
+        var response = service.delete(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

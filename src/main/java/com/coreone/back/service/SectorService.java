@@ -61,4 +61,12 @@ public class SectorService {
                 () -> new NotFoundException("Sector not found!")
         );
     }
+
+    public String delete(UUID id) {
+        var sector = findById(id);
+
+        repository.delete(sector);
+
+        return "Sector " + id + " deleted";
+    }
 }
