@@ -1,21 +1,17 @@
 package com.coreone.back.controller;
 
 import com.coreone.back.domain.User;
-import com.coreone.back.dto.enterprise.CreateEnterpriseRequestDTO;
-import com.coreone.back.dto.enterprise.CreateEnterpriseResponseDTO;
-import com.coreone.back.dto.enterprise.GetEnterpriseResponse;
+import com.coreone.back.dto.enterprise.*;
 import com.coreone.back.mapper.EnterpriseMapper;
 import com.coreone.back.repository.UserRepository;
 import com.coreone.back.service.EnterpriseService;
+import com.coreone.back.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/enterprise")
@@ -25,18 +21,15 @@ public class EnterpriseController {
     private final EnterpriseService service;
     private final UserRepository userRepository;
     private final EnterpriseMapper mapper;
+    private final AuthUtil authUtil;
 
     @PostMapping("/create")
     public ResponseEntity<CreateEnterpriseResponseDTO> create(@RequestBody CreateEnterpriseRequestDTO request) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not Found!"));
+        User user = authUtil.getAuthenticatedUser();
 
         System.out.println("REQUEST name: " + request.getName());
         System.out.println("REQUEST description: " + request.getDescription());
-        System.out.println("REQUEST email: " + auth.getName());
+        System.out.println("REQUEST email: " + user.getName());
         System.out.println("REQUEST id: " + user.getId());
 
         request.setCreatorId(user.getId());
@@ -46,12 +39,23 @@ public class EnterpriseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GetEnterpriseResponse>> getAll() {
-        var enterprises = service.getAll();
+    public ResponseEntity<Page<GetEnterpriseResponse>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        var enterprises = service.getAll(page, size);
 
-        List<GetEnterpriseResponse> response = enterprises.stream()
-                .map(mapper::toGetEnterpriseResponse)
-                .collect(Collectors.toList());
+        Page<GetEnterpriseResponse> response = enterprises.map(mapper::toGetEnterpriseResponse);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/update")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<UpdateEnterpriseResponseDTO> update(@RequestBody UpdateEnterpriseRequestDTO request) {
+        User user = authUtil.getAuthenticatedUser();
+
+        var response = service.update(request, user.getId());
 
         return ResponseEntity.ok(response);
     }

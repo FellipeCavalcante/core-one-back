@@ -4,16 +4,23 @@ import com.coreone.back.domain.Enterprise;
 import com.coreone.back.domain.enums.UserType;
 import com.coreone.back.dto.enterprise.CreateEnterpriseRequestDTO;
 import com.coreone.back.dto.enterprise.CreateEnterpriseResponseDTO;
+import com.coreone.back.dto.enterprise.UpdateEnterpriseRequestDTO;
+import com.coreone.back.dto.enterprise.UpdateEnterpriseResponseDTO;
+import com.coreone.back.errors.ConflictException;
 import com.coreone.back.errors.NotFoundException;
+import com.coreone.back.errors.UnauthorizedException;
+import com.coreone.back.mapper.EnterpriseMapper;
 import com.coreone.back.repository.EnterpriseRepository;
 import com.coreone.back.repository.UserRepository;
 import com.coreone.back.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,6 +28,7 @@ import java.util.UUID;
 public class EnterpriseService {
 
     private final EnterpriseRepository repository;
+    private final EnterpriseMapper mapper;
     private final UserRepository userRepository;
     private final LogService logService;
     private final JwtService jwtService;
@@ -28,6 +36,10 @@ public class EnterpriseService {
     public CreateEnterpriseResponseDTO save(CreateEnterpriseRequestDTO request) {
         var owner = userRepository.findById(request.getCreatorId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (owner.getEnterprise() != null) {
+            throw new ConflictException("User has been created enterprise");
+        }
 
         Enterprise enterprise = new Enterprise();
         enterprise.setName(request.getName());
@@ -64,8 +76,27 @@ public class EnterpriseService {
         return response;
     }
 
-    public List<Enterprise> getAll() {
-        return repository.findAll();
+    public Page<Enterprise> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAll(pageable);
+    }
+
+    public UpdateEnterpriseResponseDTO update(UpdateEnterpriseRequestDTO request, UUID userId) {
+        var enterprise = findById(request.getId());
+
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (!user.getEnterprise().getId().equals(enterprise.getId())) {
+            throw new UnauthorizedException("Unauthorized request");
+        }
+
+        enterprise.setName(request.getName());
+        enterprise.setDescription(request.getDescription());
+
+        var enterpriseUpdated = repository.save(enterprise);
+
+        return mapper.toUpdateResponse(enterpriseUpdated);
     }
 
     public Enterprise findById(UUID id) {
