@@ -1,4 +1,4 @@
-package com.findjobs.back;
+package com.coreone.back;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
