@@ -3,6 +3,7 @@ package com.coreone.back.service;
 import com.coreone.back.domain.SubSector;
 import com.coreone.back.domain.User;
 import com.coreone.back.dto.subSector.GetSubSectorResponse;
+import com.coreone.back.errors.ConflictException;
 import com.coreone.back.errors.NotFoundException;
 import com.coreone.back.mapper.SubSectorMapper;
 import com.coreone.back.repository.SubSectorRepository;
@@ -49,6 +50,10 @@ public class SubSectorService {
         var subSector = findById(subSectorId);
 
         var user = userService.findById(userId);
+
+        if (user.getSubSector() != null) {
+            throw new ConflictException("Sub Sector already exists");
+        }
 
         user.setSubSector(subSector);
 
