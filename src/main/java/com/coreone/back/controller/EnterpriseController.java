@@ -3,7 +3,6 @@ package com.coreone.back.controller;
 import com.coreone.back.domain.User;
 import com.coreone.back.dto.enterprise.*;
 import com.coreone.back.mapper.EnterpriseMapper;
-import com.coreone.back.repository.UserRepository;
 import com.coreone.back.service.EnterpriseService;
 import com.coreone.back.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class EnterpriseController {
 
     private final EnterpriseService service;
-    private final UserRepository userRepository;
     private final EnterpriseMapper mapper;
     private final AuthUtil authUtil;
 
