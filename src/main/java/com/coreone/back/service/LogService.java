@@ -4,9 +4,11 @@ import com.coreone.back.domain.Log;
 import com.coreone.back.domain.User;
 import com.coreone.back.repository.LogRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -26,8 +28,9 @@ public class LogService {
         repository.save(log);
     }
 
-    public List<Log> findAll() {
-        return repository.findAllWithUser();
+    public Page<Log> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAllWithUser(pageable);
     }
 
     public Log findById(UUID id) {
