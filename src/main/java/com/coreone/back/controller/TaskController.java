@@ -73,4 +73,11 @@ public class TaskController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/status/{id}")
+    public ResponseEntity<GetTaskResponse> changeStatus(@PathVariable UUID id, @RequestParam String status) {
+        var response = service.changeStatus(id, status);
+
+        return ResponseEntity.ok(response);
+    }
 }

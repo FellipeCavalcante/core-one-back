@@ -1,6 +1,8 @@
 package com.coreone.back.service;
 
 import com.coreone.back.domain.*;
+import com.coreone.back.dto.task.GetTaskResponse;
+import com.coreone.back.mapper.TaskMapper;
 import com.coreone.back.repository.*;
 import com.coreone.back.dto.task.CreateTaskRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TaskService {
     private final TaskRepository taskRepository;
+    private final TaskMapper mapper;
     private final UserRepository userRepository;
     private final SubSectorRepository subSectorRepository;
     private final LogService logService;
@@ -73,5 +76,23 @@ public class TaskService {
         taskRepository.delete(task);
 
         return "Deleted task: " + task.getTitle();
+    }
+
+    public GetTaskResponse changeStatus(UUID id, String status) {
+        var task = getById(id);
+
+        status = status.toUpperCase();
+
+        if (task.getStatus().equals(status)) {
+            throw new RuntimeException("Task status is already set to " + status);
+        }
+
+        task.setStatus(status);
+
+        taskRepository.save(task);
+
+        var taskSaved = mapper.toGetTaskResponse(task);
+
+        return taskSaved;
     }
 }

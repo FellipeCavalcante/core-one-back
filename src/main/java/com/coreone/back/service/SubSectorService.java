@@ -1,6 +1,7 @@
 package com.coreone.back.service;
 
 import com.coreone.back.domain.SubSector;
+import com.coreone.back.domain.User;
 import com.coreone.back.dto.subSector.GetSubSectorResponse;
 import com.coreone.back.errors.NotFoundException;
 import com.coreone.back.mapper.SubSectorMapper;
@@ -51,7 +52,7 @@ public class SubSectorService {
 
         user.setSubSector(subSector);
 
-        return "Usuário " + user.getUsername() + " cadastrado com sucesso!";
+        return "User " + user.getUsername() + " added to sub sector!";
     }
 
     public String delete(UUID id) {
@@ -60,5 +61,18 @@ public class SubSectorService {
         repository.deleteById(subSector.getId());
 
         return "SubSector " + subSector.getId() + " deleted!";
+    }
+
+    public String removeUser(UUID subSectorId, UUID userId) {
+        var subSector = findById(subSectorId);
+        var user = userService.findById(userId);
+
+        user.setSubSector(null);
+
+        subSector.getUsers().remove(user);
+
+        userService.save(user);
+
+        return "User removed";
     }
 }
