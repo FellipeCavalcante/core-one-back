@@ -5,6 +5,7 @@ import com.coreone.back.dto.sector.CreateSectorResponseDTO;
 import com.coreone.back.dto.sector.GetSectorResponse;
 import com.coreone.back.service.SectorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,8 +31,9 @@ public class SectorController {
     }
 
     @GetMapping("/by-enterprise/{id}")
-    public ResponseEntity<List<GetSectorResponse>> getByEnterprise(@PathVariable UUID id) {
-        var response = service.listAllEnterpriseSectors(id);
+    public ResponseEntity<Page<GetSectorResponse>> getByEnterprise(@PathVariable UUID id, @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "20") int size) {
+        var response = service.listAllEnterpriseSectors(id, page, size);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

@@ -9,6 +9,9 @@ import com.coreone.back.errors.sectorlAlreadyExistsException;
 import com.coreone.back.mapper.SectorMapper;
 import com.coreone.back.repository.SectorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,14 +47,12 @@ public class SectorService {
                 });
     }
 
-    public List<GetSectorResponse> listAllEnterpriseSectors(UUID id) {
+    public Page<GetSectorResponse> listAllEnterpriseSectors(UUID id, int page, int size) {
         var enterprise = enterpriseService.findById(id);
 
         var sectors = repository.findAllByEnterpriseId(enterprise.getId());
 
-        List<GetSectorResponse> response = sectors.stream()
-                .map(mapper::toGetSectorResponse)
-                .collect(Collectors.toList());
+        Page<GetSectorResponse> response = sectors.map(mapper::toGetSectorResponse);
 
         return response;
     }
