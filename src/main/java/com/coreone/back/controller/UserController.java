@@ -6,6 +6,7 @@ import com.coreone.back.mapper.UserMapper;
 import com.coreone.back.repository.UserRepository;
 import com.coreone.back.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -27,12 +28,13 @@ public class UserController {
 
     @GetMapping("/reports")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<List<GetUserResponse>> getReports() {
-        var users = service.findAll();
+    public ResponseEntity<Page<GetUserResponse>> getReports(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        var users = service.findAll(page, size);
 
-        List<GetUserResponse> response = users.stream()
-                .map(userMapper::toGetUserResponse)
-                .collect(Collectors.toList());
+        Page<GetUserResponse> response = users.map(userMapper::toGetUserResponse);
 
         return ResponseEntity.ok(response);
     }

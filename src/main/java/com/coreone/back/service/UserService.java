@@ -9,6 +9,9 @@ import com.coreone.back.errors.NotFoundException;
 import com.coreone.back.repository.UserRepository;
 import com.coreone.back.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,8 +60,9 @@ public class UserService {
         );
     }
 
-    public List<User> findAll() {
-        return repository.findAll();
+    public Page<User> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAll(pageable);
     }
 
     public void delete(UUID id, User requestingUser) {
