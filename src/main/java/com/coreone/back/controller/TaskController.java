@@ -8,6 +8,7 @@ import com.coreone.back.mapper.TaskMapper;
 import com.coreone.back.repository.UserRepository;
 import com.coreone.back.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,13 +48,13 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GetTaskResponse>> getAll() {
-        var tasks = service.findAll();
+    public ResponseEntity<Page<GetTaskResponse>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        var tasks = service.findAll(page, size);
 
-        List<GetTaskResponse> response = tasks.stream()
-                .map(mapper::toGetTaskResponse)
-                .collect(Collectors.toList());
-
+        Page<GetTaskResponse> response = tasks.map(mapper::toGetTaskResponse);
         return ResponseEntity.ok(response);
     }
 
