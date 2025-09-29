@@ -64,9 +64,9 @@ public class TaskService {
         return savedTask;
     }
 
-    public Page<Task> findAll(int page, int size) {
+    public Page<Task> findAll(User requestingUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return taskRepository.findAll(pageable);
+        return taskRepository.findAllByEnterpriseIdFromSubSectors(requestingUser.getEnterprise().getId(), pageable);
     }
 
     public Task getById(UUID id) {

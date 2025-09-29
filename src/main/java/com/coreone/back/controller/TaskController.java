@@ -52,7 +52,13 @@ public class TaskController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        var tasks = service.findAll(page, size);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        User requestingUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not Found!"));
+
+        var tasks = service.findAll(requestingUser, page, size);
 
         Page<GetTaskResponse> response = tasks.map(mapper::toGetTaskResponse);
         return ResponseEntity.ok(response);
