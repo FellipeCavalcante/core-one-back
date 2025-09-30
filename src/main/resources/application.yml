@@ -1,35 +1,33 @@
-spring:
-  config:
-    import: optional:classpath:.env[.properties]
-  application:
-    name: back
-  datasource:
-    url: jdbc:postgresql://localhost:5432/findjobsdb
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: none
-  threads:
-    virtual:
-      enabled: true
-
-logging:
-  level:
-    com.dev.fellipe.user_service: debug
-    net.ttddyy.dsproxy.listener: debug
-    org.springframework.security: debug
-
-server:
-  port: 8080
-  servlet:
-    context-path: /
-  error:
-    include-stacktrace: never
-    include-binding-errors: never
-    include-message: always
-    include-exception: false
-  tomcat:
+  spring:
+    application:
+      name: back
+    datasource:
+      url: jdbc:postgresql://localhost:5432/coreonedb
+      username: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+    jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: none
     threads:
-      max: 20
+      virtual:
+        enabled: true
+
+  logging:
+    level:
+      com.dev.fellipe.user_service: debug
+      net.ttddyy.dsproxy.listener: debug
+      org.springframework.security: debug
+
+  server:
+    port: 8080
+    servlet:
+      context-path: /
+    error:
+      include-stacktrace: never
+      include-binding-errors: never
+      include-message: always
+      include-exception: false
+    tomcat:
+      threads:
+        max: 20
