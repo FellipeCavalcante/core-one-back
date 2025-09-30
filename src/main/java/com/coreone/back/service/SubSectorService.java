@@ -2,9 +2,12 @@ package com.coreone.back.service;
 
 import com.coreone.back.domain.SubSector;
 import com.coreone.back.domain.User;
+import com.coreone.back.dto.subSector.CreateSubSectorRequestDTO;
+import com.coreone.back.dto.subSector.CreateSubSectorResponseDTO;
 import com.coreone.back.dto.subSector.GetSubSectorResponse;
 import com.coreone.back.errors.ConflictException;
 import com.coreone.back.errors.NotFoundException;
+import com.coreone.back.errors.UnauthorizedException;
 import com.coreone.back.mapper.SubSectorMapper;
 import com.coreone.back.repository.SubSectorRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +33,21 @@ public class SubSectorService {
         );
     }
 
-    public SubSector save(SubSector subSector) {
-        return repository.save(subSector);
+    public CreateSubSectorResponseDTO save(UUID userId, CreateSubSectorRequestDTO request) {
+        var user = userService.findById(userId);
+        var sector = sectorService.findById(request.getSector());
+
+        if (user.getEnterprise().getId() != sector.getEnterprise().getId()) {
+            throw new UnauthorizedException("Unauthorized request");
+        }
+
+        var subSector = mapper.toSubSector(request);
+
+        var subSectorSaved = repository.save(subSector);
+
+        var response = mapper.toCreateSubSectorResponseDTO(subSectorSaved);
+
+        return response;
     }
 
     public List<GetSubSectorResponse> listAllSectorsSubSectors(UUID id) {

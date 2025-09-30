@@ -18,7 +18,6 @@ public interface SectorMapper {
 
     // DTO -> Entity
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "enterprise", source = "enterprise")
     Sector toSector(CreateSectorRequestDTO dto);
 
     // Entity -> DTO

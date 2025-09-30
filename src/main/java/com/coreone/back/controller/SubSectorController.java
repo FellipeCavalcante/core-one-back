@@ -1,10 +1,12 @@
 package com.coreone.back.controller;
 
+import com.coreone.back.domain.User;
 import com.coreone.back.dto.subSector.CreateSubSectorRequestDTO;
 import com.coreone.back.dto.subSector.CreateSubSectorResponseDTO;
 import com.coreone.back.dto.subSector.GetSubSectorResponse;
 import com.coreone.back.mapper.SubSectorMapper;
 import com.coreone.back.service.SubSectorService;
+import com.coreone.back.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +23,13 @@ public class SubSectorController {
 
     private final SubSectorService service;
     private final SubSectorMapper mapper;
+    private final AuthUtil authUtil;
 
     @PostMapping("/create")
     public ResponseEntity<CreateSubSectorResponseDTO> createSubSector(@RequestBody CreateSubSectorRequestDTO request) {
-        var subSector = mapper.toSubSector(request);
-        var subSectorSaved = service.save(subSector);
+        User user = authUtil.getAuthenticatedUser();
 
-        var response = mapper.toCreateSubSectorResponseDTO(subSectorSaved);
+        var response = service.save(user.getId(), request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

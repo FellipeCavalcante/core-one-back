@@ -33,10 +33,12 @@ public class SectorController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/by-enterprise/{id}")
-    public ResponseEntity<Page<GetSectorResponse>> getByEnterprise(@PathVariable UUID id, @RequestParam(defaultValue = "0") int page,
+    @GetMapping("/by-enterprise")
+    public ResponseEntity<Page<GetSectorResponse>> getByEnterprise(@RequestParam(defaultValue = "0") int page,
                                                                    @RequestParam(defaultValue = "20") int size) {
-        var response = service.listAllEnterpriseSectors(id, page, size);
+        User user = authUtil.getAuthenticatedUser();
+
+        var response = service.listAllEnterpriseSectors(user.getId(), page, size);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -44,7 +46,9 @@ public class SectorController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<String> delete(@PathVariable UUID id) {
-        var response = service.delete(id);
+        User user = authUtil.getAuthenticatedUser();
+
+        var response = service.delete(id, user.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
