@@ -9,5 +9,4 @@ import java.util.UUID;
 public class CreateSectorRequestDTO {
     @NotBlank(message = "The field 'name' is required")
     private String name;
-    private UUID enterprise;
 }

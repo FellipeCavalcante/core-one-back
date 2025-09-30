@@ -8,15 +8,14 @@ import com.coreone.back.errors.NotFoundException;
 import com.coreone.back.errors.sectorlAlreadyExistsException;
 import com.coreone.back.mapper.SectorMapper;
 import com.coreone.back.repository.SectorRepository;
+import com.coreone.back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +23,15 @@ public class SectorService {
     private final SectorRepository repository;
     private final SectorMapper mapper;
     private final EnterpriseService enterpriseService;
+    private final UserRepository userRepository;
 
-    public CreateSectorResponseDTO save(CreateSectorRequestDTO sector) {
+    public CreateSectorResponseDTO save(CreateSectorRequestDTO sector, UUID userId) {
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
         assertSectorDosNotExists(sector.getName());
 
-        var enterprise = enterpriseService.findById(sector.getEnterprise());
+        var enterprise = enterpriseService.findById(user.getEnterprise().getId());
 
         sector.setName(sector.getName().toUpperCase());
 
@@ -50,7 +53,9 @@ public class SectorService {
     public Page<GetSectorResponse> listAllEnterpriseSectors(UUID id, int page, int size) {
         var enterprise = enterpriseService.findById(id);
 
-        var sectors = repository.findAllByEnterpriseId(enterprise.getId());
+        Pageable pageable = PageRequest.of(page, size);
+
+        var sectors = repository.findAllByEnterpriseId(enterprise.getId(), pageable);
 
         Page<GetSectorResponse> response = sectors.map(mapper::toGetSectorResponse);
 
