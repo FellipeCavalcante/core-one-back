@@ -38,4 +38,7 @@ Enterprise {
     @OneToMany(mappedBy = "enterprise")
     private List<User> users = new ArrayList<>();
 
+    @OneToMany(mappedBy = "enterprise")
+    private List<Task> tasks = new ArrayList<>();
+
 }

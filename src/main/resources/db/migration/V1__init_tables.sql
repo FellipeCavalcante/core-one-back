@@ -48,9 +48,11 @@ CREATE TABLE tasks
     title       VARCHAR(255) NOT NULL,
     description TEXT         NOT NULL,
     status      VARCHAR(50)  NOT NULL,
+    enterprise_id UUID,
     created_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP,
-    finished_at TIMESTAMP
+    finished_at TIMESTAMP,
+    CONSTRAINT fk_user_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE SET NULL
 );
 
 CREATE TABLE task_sub_sector

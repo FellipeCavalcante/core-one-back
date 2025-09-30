@@ -43,6 +43,10 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TaskMember> members = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "enterprise_id")
+    private Enterprise enterprise;
+
     public void addMember(TaskMember member) {
         members.add(member);
         member.setTask(this);
