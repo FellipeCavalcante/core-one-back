@@ -27,10 +27,11 @@ public class TaskService {
     private final TaskSubSectorRepository taskSubSectorRepository;
 
     @Transactional
-    public Task createTask(CreateTaskRequestDTO request) {
+    public Task createTask(User user,CreateTaskRequestDTO request) {
         Task task = new Task();
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
+        task.setEnterprise(user.getEnterprise());
         task.setStatus("PENDING");
 
         Task savedTask = taskRepository.save(task);
