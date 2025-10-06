@@ -1,7 +1,7 @@
 package com.coreone.back.security;
 
-import com.coreone.back.domain.User;
-import com.coreone.back.repository.UserRepository;
+import com.coreone.back.modules.user.domain.User;
+import com.coreone.back.modules.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

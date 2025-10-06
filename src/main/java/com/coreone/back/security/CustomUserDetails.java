@@ -1,6 +1,6 @@
 package com.coreone.back.security;
 
-import com.coreone.back.domain.User;
+import com.coreone.back.modules.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
