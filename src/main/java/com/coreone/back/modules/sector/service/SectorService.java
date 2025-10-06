@@ -1,16 +1,16 @@
 package com.coreone.back.modules.sector.service;
 
+import com.coreone.back.common.errors.NotFoundException;
+import com.coreone.back.common.errors.UnauthorizedException;
+import com.coreone.back.common.errors.sectorlAlreadyExistsException;
+import com.coreone.back.modules.enterprise.service.EnterpriseService;
 import com.coreone.back.modules.sector.domain.Sector;
 import com.coreone.back.modules.sector.dto.CreateSectorRequestDTO;
 import com.coreone.back.modules.sector.dto.CreateSectorResponseDTO;
 import com.coreone.back.modules.sector.dto.GetSectorResponse;
-import com.coreone.back.common.errors.NotFoundException;
-import com.coreone.back.common.errors.UnauthorizedException;
-import com.coreone.back.common.errors.sectorlAlreadyExistsException;
 import com.coreone.back.modules.sector.mapper.SectorMapper;
-import com.coreone.back.modules.enterprise.service.EnterpriseService;
 import com.coreone.back.modules.sector.repository.SectorRepository;
-import com.coreone.back.modules.user.repository.UserRepository;
+import com.coreone.back.modules.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,12 +25,8 @@ public class SectorService {
     private final SectorRepository repository;
     private final SectorMapper mapper;
     private final EnterpriseService enterpriseService;
-    private final UserRepository userRepository;
 
-    public CreateSectorResponseDTO save(CreateSectorRequestDTO sector, UUID userId) {
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
-
+    public CreateSectorResponseDTO save(CreateSectorRequestDTO sector, User user) {
         assertSectorDosNotExists(sector.getName());
 
         var enterprise = enterpriseService.findById(user.getEnterprise().getId());
@@ -52,9 +48,7 @@ public class SectorService {
                 });
     }
 
-    public Page<GetSectorResponse> listAllEnterpriseSectors(UUID id, int page, int size) {
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+    public Page<GetSectorResponse> listAllEnterpriseSectors(User user, int page, int size) {
 
         var enterprise = enterpriseService.findById(user.getEnterprise().getId());
 
@@ -73,11 +67,9 @@ public class SectorService {
         );
     }
 
-    public String delete(UUID id, UUID userId) {
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+    public String delete(UUID id, User user) {
 
-        if (!user.getEnterprise().getId().equals(userId)) {
+        if (!user.getEnterprise().getId().equals(user.getId())) {
             throw new UnauthorizedException("Unauthorized request");
         }
 

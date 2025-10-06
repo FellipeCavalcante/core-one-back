@@ -9,6 +9,7 @@ import com.coreone.back.common.errors.NotFoundException;
 import com.coreone.back.common.errors.UnauthorizedException;
 import com.coreone.back.modules.subSector.mapper.SubSectorMapper;
 import com.coreone.back.modules.sector.service.SectorService;
+import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.user.service.UserService;
 import com.coreone.back.modules.subSector.repository.SubSectorRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,7 @@ public class SubSectorService {
         );
     }
 
-    public CreateSubSectorResponseDTO save(UUID userId, CreateSubSectorRequestDTO request) {
-        var user = userService.findById(userId);
+    public CreateSubSectorResponseDTO save(User user, CreateSubSectorRequestDTO request) {
         var sector = sectorService.findById(request.getSector());
 
         if (user.getEnterprise().getId() != sector.getEnterprise().getId()) {

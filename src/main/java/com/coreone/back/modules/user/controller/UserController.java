@@ -1,5 +1,6 @@
 package com.coreone.back.modules.user.controller;
 
+import com.coreone.back.common.util.AuthUtil;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.user.dto.GetUserResponse;
 import com.coreone.back.modules.user.mapper.UserMapper;
@@ -21,8 +22,8 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService service;
-    private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final AuthUtil authUtil;
 
     @GetMapping("/reports")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -39,12 +40,7 @@ public class UserController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") UUID id) {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        User requestingUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not Found!"));
+        User requestingUser = authUtil.getAuthenticatedUser();
 
         service.delete(id, requestingUser);
 

@@ -28,7 +28,7 @@ public class SectorController {
     public ResponseEntity<CreateSectorResponseDTO> create(@RequestBody CreateSectorRequestDTO request) {
         User user = authUtil.getAuthenticatedUser();
 
-        var response = service.save(request, user.getId());
+        var response = service.save(request, user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -38,7 +38,7 @@ public class SectorController {
                                                                    @RequestParam(defaultValue = "20") int size) {
         User user = authUtil.getAuthenticatedUser();
 
-        var response = service.listAllEnterpriseSectors(user.getId(), page, size);
+        var response = service.listAllEnterpriseSectors(user, page, size);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -48,7 +48,7 @@ public class SectorController {
     public ResponseEntity<String> delete(@PathVariable UUID id) {
         User user = authUtil.getAuthenticatedUser();
 
-        var response = service.delete(id, user.getId());
+        var response = service.delete(id, user);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

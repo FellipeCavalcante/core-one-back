@@ -1,13 +1,12 @@
 package com.coreone.back.modules.task.controller;
 
-import com.coreone.back.modules.user.domain.User;
+import com.coreone.back.common.util.AuthUtil;
 import com.coreone.back.modules.task.dto.CreateTaskRequestDTO;
 import com.coreone.back.modules.task.dto.CreateTaskResponseDTO;
 import com.coreone.back.modules.task.dto.GetTaskResponse;
 import com.coreone.back.modules.task.mapper.TaskMapper;
-import com.coreone.back.modules.user.repository.UserRepository;
 import com.coreone.back.modules.task.service.TaskService;
-import com.coreone.back.common.util.AuthUtil;
+import com.coreone.back.modules.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ import java.util.UUID;
 public class TaskController {
 
     private final TaskService service;
-    private final UserRepository userRepository;
     private final TaskMapper mapper;
     private final AuthUtil authUtil;
 

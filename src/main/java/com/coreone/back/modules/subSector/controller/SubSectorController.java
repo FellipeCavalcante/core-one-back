@@ -29,7 +29,7 @@ public class SubSectorController {
     public ResponseEntity<CreateSubSectorResponseDTO> createSubSector(@RequestBody CreateSubSectorRequestDTO request) {
         User user = authUtil.getAuthenticatedUser();
 
-        var response = service.save(user.getId(), request);
+        var response = service.save(user, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
