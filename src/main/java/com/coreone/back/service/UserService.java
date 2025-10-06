@@ -7,16 +7,15 @@ import com.coreone.back.errors.EmailAlreadyExistsException;
 import com.coreone.back.errors.LoginRequestException;
 import com.coreone.back.errors.NotFoundException;
 import com.coreone.back.repository.UserRepository;
+import com.coreone.back.security.CustomUserDetails;
 import com.coreone.back.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -40,11 +39,7 @@ public class UserService {
             throw new LoginRequestException("Email or password is incorrect");
         }
 
-        UserDetails userDetails = org.springframework.security.core.userdetails.User
-                .withUsername(userFind.getEmail())
-                .password(userFind.getPassword())
-                .authorities(userFind.getAuthorities())
-                .build();
+        CustomUserDetails userDetails = new CustomUserDetails(userFind);
 
         String token = jwtService.generateToken(userDetails);
 

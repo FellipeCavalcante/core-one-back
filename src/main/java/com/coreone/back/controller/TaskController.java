@@ -7,13 +7,12 @@ import com.coreone.back.dto.task.GetTaskResponse;
 import com.coreone.back.mapper.TaskMapper;
 import com.coreone.back.repository.UserRepository;
 import com.coreone.back.service.TaskService;
+import com.coreone.back.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -26,15 +25,11 @@ public class TaskController {
     private final TaskService service;
     private final UserRepository userRepository;
     private final TaskMapper mapper;
-
+    private final AuthUtil authUtil;
 
     @PostMapping("/create")
     public ResponseEntity<CreateTaskResponseDTO> createTask(@RequestBody CreateTaskRequestDTO request) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not Found!"));
+        User user = authUtil.getAuthenticatedUser();
 
         request.setCreatorId(user.getId());
 
@@ -50,11 +45,7 @@ public class TaskController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        User requestingUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not Found!"));
+        User requestingUser = authUtil.getAuthenticatedUser();
 
         var tasks = service.findAll(requestingUser, page, size);
 
@@ -86,3 +77,4 @@ public class TaskController {
         return ResponseEntity.ok(response);
     }
 }
+

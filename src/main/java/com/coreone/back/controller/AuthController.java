@@ -1,6 +1,5 @@
 package com.coreone.back.controller;
 
-import com.coreone.back.domain.SubSector;
 import com.coreone.back.domain.enums.UserType;
 import com.coreone.back.dto.users.CreateUserRequestDTO;
 import com.coreone.back.dto.users.CreateUserResponseDTO;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/auth")
