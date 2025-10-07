@@ -1,5 +1,6 @@
 package com.coreone.back.modules.enterprise.domain;
 
+import com.coreone.back.modules.project.domain.Project;
 import com.coreone.back.modules.sector.domain.Sector;
 import com.coreone.back.modules.task.domain.Task;
 import com.coreone.back.modules.user.domain.User;
@@ -44,4 +45,6 @@ Enterprise {
     @OneToMany(mappedBy = "enterprise")
     private List<Task> tasks = new ArrayList<>();
 
+    @OneToMany(mappedBy = "enterprise")
+    private List<Project> projects = new ArrayList<>();
 }

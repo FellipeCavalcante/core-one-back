@@ -37,8 +37,8 @@ public class SubSectorService {
     public CreateSubSectorResponseDTO save(User user, CreateSubSectorRequestDTO request) {
         var sector = sectorService.findById(request.getSector());
 
-        if (user.getEnterprise().getId() != sector.getEnterprise().getId()) {
-            throw new UnauthorizedException("Unauthorized request");
+        if (!user.getEnterprise().getId().equals(sector.getEnterprise().getId())) {
+            throw new UnauthorizedException("Unauthorized request by user");
         }
 
         var subSector = mapper.toSubSector(request);
