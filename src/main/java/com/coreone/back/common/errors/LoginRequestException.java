@@ -1,10 +1,11 @@
 package com.coreone.back.common.errors;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class LoginRequestException extends ResponseStatusException {
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class LoginRequestException extends RuntimeException {
     public LoginRequestException(String message) {
-        super(HttpStatus.BAD_REQUEST, message);
+        super(message);
     }
 }

@@ -51,11 +51,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
-        try {
-            var response = service.login(request.getEmail(), request.getPassword());
-            return ResponseEntity.ok(response);
-        } catch (LoginRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        var response = service.login(request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(response);
     }
 }
