@@ -33,15 +33,6 @@ public class UserService {
         User userToDelete = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        System.out.println("USUÁRIO QUE ESTÁ DELETANDO:  " + requestingUser.getType() + " type: " + requestingUser.getId());
-        System.out.println("USUÁRIO QUE VAI SER DELETADO: " + userToDelete.getType() + " type: " + userToDelete.getId());
-        System.out.println("ID DO PARAMETRO: " + id);
-
-        System.out.println("TIPO DO USUÁRIO REQUEST: '" + requestingUser.getType() + "'");
-
-        System.out.println("USUÁRIO REQUEST - Tipo: '" + requestingUser.getType() + "'");
-        System.out.println("COMPARAÇÃO COM 'ADMIN': " + "ADMIN".equals(requestingUser.getType()));
-
         boolean isAdmin = requestingUser.getType() == UserType.ADMIN;
         boolean isSelf = requestingUser.getId().equals(id);
 

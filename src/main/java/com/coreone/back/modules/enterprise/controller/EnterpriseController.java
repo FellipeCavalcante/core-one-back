@@ -25,11 +25,6 @@ public class EnterpriseController {
     public ResponseEntity<CreateEnterpriseResponseDTO> create(@RequestBody CreateEnterpriseRequestDTO request) {
         User user = authUtil.getAuthenticatedUser();
 
-        System.out.println("REQUEST name: " + request.getName());
-        System.out.println("REQUEST description: " + request.getDescription());
-        System.out.println("REQUEST email: " + user.getName());
-        System.out.println("REQUEST id: " + user.getId());
-
         request.setCreatorId(user.getId());
 
         var response = service.save(request);

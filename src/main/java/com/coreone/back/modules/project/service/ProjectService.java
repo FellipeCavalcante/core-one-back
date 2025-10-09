@@ -27,7 +27,6 @@ public class ProjectService {
     private final UserService userService;
     private final SubSectorService subSectorService;
     private final ProjectMemberRepository projectMemberRepository;
-    private ProjectMember projectMember;
 
     public ProjectResponseDTO save(User user, CreateProjectRequestDTO dto) {
         var project = mapper.toDomain(dto);
