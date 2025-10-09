@@ -30,7 +30,7 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(project);
     }
 
-    @PostMapping("/add-user/{projectId}/{userId")
+    @PostMapping("/add-user/{projectId}/{userId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<String> addUser(@PathVariable UUID projectId, @PathVariable UUID userId) {
         User user = authUtil.getAuthenticatedUser();
