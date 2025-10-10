@@ -3,6 +3,7 @@ package com.coreone.back.modules.project.controller;
 import com.coreone.back.common.util.AuthUtil;
 import com.coreone.back.modules.project.dto.CreateProjectRequestDTO;
 import com.coreone.back.modules.project.dto.ProjectResponseDTO;
+import com.coreone.back.modules.project.dto.UpdateProjectRequest;
 import com.coreone.back.modules.project.service.ProjectService;
 import com.coreone.back.modules.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +39,15 @@ public class ProjectController {
         var response = service.addUser(user, projectId, userId);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/update/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<Void> updateProject(@PathVariable UUID id, @RequestBody UpdateProjectRequest request) {
+        User user = authUtil.getAuthenticatedUser();
+
+        service.update(user, id, request);
+
+        return ResponseEntity.noContent().build();
     }
 }

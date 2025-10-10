@@ -7,6 +7,7 @@ import com.coreone.back.modules.project.domain.ProjectMember;
 import com.coreone.back.modules.project.domain.ProjectSubSector;
 import com.coreone.back.modules.project.dto.CreateProjectRequestDTO;
 import com.coreone.back.modules.project.dto.ProjectResponseDTO;
+import com.coreone.back.modules.project.dto.UpdateProjectRequest;
 import com.coreone.back.modules.project.mapper.ProjectMapper;
 import com.coreone.back.modules.project.repository.ProjectMemberRepository;
 import com.coreone.back.modules.project.repository.ProjectRepository;
@@ -16,6 +17,7 @@ import com.coreone.back.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -73,6 +75,28 @@ public class ProjectService {
         projectMemberRepository.save(pm);
 
         return "User added successfully";
+    }
+
+    public void update(User user, UUID id, UpdateProjectRequest request) {
+        var project = findById(id);
+
+        if (!user.getEnterprise().equals(project.getEnterprise())) {
+            throw new UnauthorizedException("Unauthorized request by user");
+        }
+
+        if (request.getName() != null) {
+            project.setName(request.getName());
+        }
+        if (request.getDescription() != null) {
+            project.setDescription(request.getDescription());
+        }
+        if (request.getStatus() != null) {
+            project.setStatus(request.getStatus());
+        }
+
+        project.setUpdatedAt(LocalDateTime.now());
+
+        repository.save(project);
     }
 
     public Project findById(UUID projectId) {
