@@ -1,5 +1,6 @@
 package com.coreone.back.modules.subSector.controller;
 
+import com.coreone.back.modules.subSector.dto.UpdateSubSectorRequest;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.subSector.dto.CreateSubSectorRequestDTO;
 import com.coreone.back.modules.subSector.dto.CreateSubSectorResponseDTO;
@@ -47,6 +48,13 @@ public class SubSectorController {
         var response = service.addUserToSubSector(subSectorId, userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<Void> updateSubSector(@PathVariable UUID id, @RequestBody UpdateSubSectorRequest request) {
+        service.update(id, request);
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/remove-user")

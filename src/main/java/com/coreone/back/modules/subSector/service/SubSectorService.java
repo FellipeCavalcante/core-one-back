@@ -7,6 +7,7 @@ import com.coreone.back.modules.subSector.dto.GetSubSectorResponse;
 import com.coreone.back.common.errors.ConflictException;
 import com.coreone.back.common.errors.NotFoundException;
 import com.coreone.back.common.errors.UnauthorizedException;
+import com.coreone.back.modules.subSector.dto.UpdateSubSectorRequest;
 import com.coreone.back.modules.subSector.mapper.SubSectorMapper;
 import com.coreone.back.modules.sector.service.SectorService;
 import com.coreone.back.modules.user.domain.User;
@@ -74,6 +75,16 @@ public class SubSectorService {
         user.setSubSector(subSector);
 
         return "User " + user.getUsername() + " added to sub sector!";
+    }
+
+    public void update(UUID id, UpdateSubSectorRequest request) {
+        var subSector = findById(id);
+
+        if (request.getName() != null) {
+            subSector.setName(request.getName());
+        }
+
+        repository.save(subSector);
     }
 
     public String delete(UUID id) {
