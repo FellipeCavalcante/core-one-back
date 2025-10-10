@@ -8,6 +8,7 @@ import com.coreone.back.modules.sector.domain.Sector;
 import com.coreone.back.modules.sector.dto.CreateSectorRequestDTO;
 import com.coreone.back.modules.sector.dto.CreateSectorResponseDTO;
 import com.coreone.back.modules.sector.dto.GetSectorResponse;
+import com.coreone.back.modules.sector.dto.UpdateSectorRequest;
 import com.coreone.back.modules.sector.mapper.SectorMapper;
 import com.coreone.back.modules.sector.repository.SectorRepository;
 import com.coreone.back.modules.user.domain.User;
@@ -65,6 +66,20 @@ public class SectorService {
         return repository.findById(id).orElseThrow(
                 () -> new NotFoundException("Sector not found!")
         );
+    }
+
+    public void update(User user, UUID sectorId, UpdateSectorRequest request) {
+        var sector = findById(sectorId);
+
+        if (!user.getEnterprise().getId().equals(sector.getEnterprise().getId())) {
+            throw new UnauthorizedException("Unauthorized Access");
+        }
+
+        if (request.getName() != null) {
+            sector.setName(request.getName());
+        }
+
+        repository.save(sector);
     }
 
     public String delete(UUID id, User user) {

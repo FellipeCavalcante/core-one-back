@@ -1,5 +1,6 @@
 package com.coreone.back.modules.sector.controller;
 
+import com.coreone.back.modules.sector.dto.UpdateSectorRequest;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.sector.dto.CreateSectorRequestDTO;
 import com.coreone.back.modules.sector.dto.CreateSectorResponseDTO;
@@ -41,6 +42,15 @@ public class SectorController {
         var response = service.listAllEnterpriseSectors(user, page, size);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PatchMapping("update/{sectorId}")
+    public ResponseEntity<Void> updateSector(@PathVariable UUID sectorId, @RequestBody UpdateSectorRequest request) {
+        User user = authUtil.getAuthenticatedUser();
+
+        service.update(user, sectorId, request);
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/delete/{id}")
