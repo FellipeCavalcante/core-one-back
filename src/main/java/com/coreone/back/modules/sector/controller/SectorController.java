@@ -44,6 +44,13 @@ public class SectorController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/details/{id}")
+    public ResponseEntity<GetSectorResponse> getById(@PathVariable UUID id) {
+        var response = service.getSectorById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PatchMapping("update/{sectorId}")
     public ResponseEntity<Void> updateSector(@PathVariable UUID sectorId, @RequestBody UpdateSectorRequest request) {
         User user = authUtil.getAuthenticatedUser();

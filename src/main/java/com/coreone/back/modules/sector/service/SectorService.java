@@ -62,6 +62,12 @@ public class SectorService {
         return response;
     }
 
+    public GetSectorResponse getSectorById(UUID id) {
+        var sector = findById(id);
+
+        return mapper.toGetSectorResponse(sector);
+    }
+
     public Sector findById(UUID id) {
         return repository.findById(id).orElseThrow(
                 () -> new NotFoundException("Sector not found!")
