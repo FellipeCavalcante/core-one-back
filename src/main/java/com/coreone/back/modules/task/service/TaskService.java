@@ -1,6 +1,9 @@
 package com.coreone.back.modules.task.service;
 
 import com.coreone.back.modules.log.service.LogService;
+import com.coreone.back.modules.project.domain.ProjectTask;
+import com.coreone.back.modules.project.repository.ProjectTaskRepository;
+import com.coreone.back.modules.project.service.ProjectService;
 import com.coreone.back.modules.subSector.domain.SubSector;
 import com.coreone.back.modules.subSector.repository.SubSectorRepository;
 import com.coreone.back.modules.task.domain.Task;
@@ -34,6 +37,8 @@ public class TaskService {
     private final LogService logService;
     private final TaskMembersRepository taskMembersRepository;
     private final TaskSubSectorRepository taskSubSectorRepository;
+    private final ProjectTaskRepository projectTaskRepository;
+    private final ProjectService projectService;
 
     @Transactional
     public Task createTask(User user, CreateTaskRequestDTO request) {
@@ -65,6 +70,14 @@ public class TaskService {
                 taskSubSectorRepository.save(tss);
                 savedTask.getSubSectors().add(tss);
             }
+        }
+
+        if (request.getProjectId() != null) {
+            var project = projectService.findById(request.getProjectId());
+            ProjectTask ps = new ProjectTask();
+            ps.setTask(savedTask);
+            ps.setProject(project);
+            projectTaskRepository.save(ps);
         }
 
         var taskCreatedBy = userRepository.findById(request.getCreatorId()).orElseThrow();

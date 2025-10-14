@@ -10,6 +10,7 @@ public class CreateTaskRequestDTO {
     private UUID creatorId;
     private String title;
     private String description;
+    private UUID projectId;
     private List<UUID> memberIds;
     private List<UUID> subSectorIds;
 }
