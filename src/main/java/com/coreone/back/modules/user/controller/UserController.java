@@ -3,6 +3,7 @@ package com.coreone.back.modules.user.controller;
 import com.coreone.back.common.util.AuthUtil;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.user.dto.GetUserResponse;
+import com.coreone.back.modules.user.dto.UpdateUserRequestDTO;
 import com.coreone.back.modules.user.mapper.UserMapper;
 import com.coreone.back.modules.user.repository.UserRepository;
 import com.coreone.back.modules.user.service.UserService;
@@ -43,6 +44,15 @@ public class UserController {
         User requestingUser = authUtil.getAuthenticatedUser();
 
         service.delete(id, requestingUser);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<Void> updateUser(@PathVariable("id") UUID id, @RequestBody UpdateUserRequestDTO requestDTO) {
+        User requestingUser = authUtil.getAuthenticatedUser();
+
+        service.update(requestingUser, id, requestDTO);
 
         return ResponseEntity.noContent().build();
     }
