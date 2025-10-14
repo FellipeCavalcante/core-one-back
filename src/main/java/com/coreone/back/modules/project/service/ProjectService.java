@@ -103,4 +103,14 @@ public class ProjectService {
         return repository.findById(projectId)
                 .orElseThrow(() -> new NotFoundException("Project not found"));
     }
+
+    public void deleteProject(User requestingUser, UUID id) {
+        var project = findById(id);
+
+        if (!requestingUser.getEnterprise().getId().equals(project.getEnterprise().getId())) {
+            throw new UnauthorizedException("Unauthorized request by user");
+        }
+
+        repository.delete(project);
+    }
 }
