@@ -28,10 +28,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<CreateUserResponseDTO> register(@RequestBody CreateUserRequestDTO request) {
-        System.out.println("Request received: " + request.toString());
-        System.out.println("Password received: " + request.getPassword());
-        System.out.println("Email received: " + request.getEmail());
-
         if (request.getPassword() == null) {
             return ResponseEntity.badRequest().body(null);
         }

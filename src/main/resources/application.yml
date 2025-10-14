@@ -1,3 +1,10 @@
+  app:
+    mail:
+      host: ${SMTP_HOST:smtp.gmail.com}
+      port: ${SMTP_PORT:587}
+      username: ${SMTP_USER}
+      password: ${SMTP_PASS}
+
   spring:
     application:
       name: back
@@ -12,6 +19,21 @@
     threads:
       virtual:
         enabled: true
+
+    mail:
+      host: ${app.mail.host}
+      port: ${app.mail.port}
+      username: ${app.mail.username}
+      password: ${app.mail.password}
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+            connectiontimeout: 5000
+            timeout: 5000
+            writetimeout: 5000
 
   logging:
     level:

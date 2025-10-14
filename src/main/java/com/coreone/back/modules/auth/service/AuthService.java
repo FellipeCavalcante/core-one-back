@@ -1,5 +1,6 @@
 package com.coreone.back.modules.auth.service;
 
+import com.coreone.back.config.EmailService;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.common.errors.EmailAlreadyExistsException;
 import com.coreone.back.common.errors.LoginRequestException;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -19,10 +22,25 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final LogService logService;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
     public User save(User user) {
         assertEmailDosNotExists(user.getEmail());
-        return repository.save(user);
+        var savedUser = repository.save(user);
+
+        Map<String, Object>  variables = Map.of(
+                "name", savedUser.getName(),
+                "link", "https://google.com" // DO: real link
+        );
+
+        emailService.sendEmailHtml(
+                savedUser.getEmail(),
+                "Bem-vindo ao Cone 🚀",
+                "welcome_email",
+                variables
+        );
+
+        return savedUser;
     }
 
     public LoginResponseDTO login(String email, String password) {
