@@ -1,20 +1,22 @@
 package com.coreone.back.modules.subSector.service;
 
+import com.coreone.back.common.errors.ConflictException;
+import com.coreone.back.common.errors.NotFoundException;
+import com.coreone.back.common.errors.UnauthorizedException;
+import com.coreone.back.modules.project.service.ProjectSubSectorService;
+import com.coreone.back.modules.sector.service.SectorService;
 import com.coreone.back.modules.subSector.domain.SubSector;
 import com.coreone.back.modules.subSector.dto.CreateSubSectorRequestDTO;
 import com.coreone.back.modules.subSector.dto.CreateSubSectorResponseDTO;
 import com.coreone.back.modules.subSector.dto.GetSubSectorResponse;
-import com.coreone.back.common.errors.ConflictException;
-import com.coreone.back.common.errors.NotFoundException;
-import com.coreone.back.common.errors.UnauthorizedException;
 import com.coreone.back.modules.subSector.dto.UpdateSubSectorRequest;
 import com.coreone.back.modules.subSector.mapper.SubSectorMapper;
-import com.coreone.back.modules.sector.service.SectorService;
+import com.coreone.back.modules.subSector.repository.SubSectorRepository;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.user.service.UserService;
-import com.coreone.back.modules.subSector.repository.SubSectorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +30,7 @@ public class SubSectorService {
     private final SubSectorMapper mapper;
     private final SectorService sectorService;
     private final UserService userService;
+    private final ProjectSubSectorService projectSubSectorService;
 
     public SubSector findById(UUID id) {
         return repository.findById(id).orElseThrow(
@@ -35,6 +38,7 @@ public class SubSectorService {
         );
     }
 
+    @Transactional
     public CreateSubSectorResponseDTO save(User user, CreateSubSectorRequestDTO request) {
         var sector = sectorService.findById(request.getSector());
 
@@ -45,6 +49,10 @@ public class SubSectorService {
         var subSector = mapper.toSubSector(request);
 
         var subSectorSaved = repository.save(subSector);
+
+        if (request.getProjectId() != null) {
+            projectSubSectorService.assign(request.getProjectId(), subSectorSaved);
+        }
 
         var response = mapper.toCreateSubSectorResponseDTO(subSectorSaved);
 

@@ -12,4 +12,5 @@ public class CreateSubSectorRequestDTO {
     private String name;
     @NotNull(message = "The field 'subSector' is required")
     private UUID sector;
+    private UUID projectId;
 }

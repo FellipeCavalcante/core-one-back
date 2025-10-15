@@ -60,4 +60,13 @@ public class ProjectController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/add-subSector/{projectId}/{subSectorId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<Void> assignSubSector(@PathVariable UUID projectId, @PathVariable UUID subSectorId) {
+
+        service.addSubSectorToProject(projectId, subSectorId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

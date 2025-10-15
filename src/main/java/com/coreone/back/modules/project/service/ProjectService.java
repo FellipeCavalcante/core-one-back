@@ -11,6 +11,7 @@ import com.coreone.back.modules.project.dto.UpdateProjectRequest;
 import com.coreone.back.modules.project.mapper.ProjectMapper;
 import com.coreone.back.modules.project.repository.ProjectMemberRepository;
 import com.coreone.back.modules.project.repository.ProjectRepository;
+import com.coreone.back.modules.subSector.domain.SubSector;
 import com.coreone.back.modules.subSector.service.SubSectorService;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.user.service.UserService;
@@ -29,6 +30,7 @@ public class ProjectService {
     private final UserService userService;
     private final SubSectorService subSectorService;
     private final ProjectMemberRepository projectMemberRepository;
+    private final ProjectSubSectorService projectSubSectorService;
 
     public ProjectResponseDTO save(User user, CreateProjectRequestDTO dto) {
         var project = mapper.toDomain(dto);
@@ -112,5 +114,9 @@ public class ProjectService {
         }
 
         repository.delete(project);
+    }
+
+    public void addSubSectorToProject(UUID projectId, UUID subSectorId) {
+        projectSubSectorService.assign(projectId, subSectorId);
     }
 }
