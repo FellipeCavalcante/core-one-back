@@ -1,6 +1,7 @@
 package com.coreone.back.modules.user.domain;
 
 import com.coreone.back.modules.enterprise.domain.Enterprise;
+import com.coreone.back.modules.enterprise.domain.EnterpriseRequest;
 import com.coreone.back.modules.subSector.domain.SubSector;
 import com.coreone.back.modules.task.domain.Task;
 import com.coreone.back.modules.task.domain.TaskMember;
@@ -12,10 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -47,6 +45,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TaskMember> taskMemberships = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EnterpriseRequest> requests = new ArrayList<>();
 
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;

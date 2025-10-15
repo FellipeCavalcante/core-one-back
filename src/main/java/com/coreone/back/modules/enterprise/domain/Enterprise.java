@@ -47,4 +47,7 @@ Enterprise {
 
     @OneToMany(mappedBy = "enterprise")
     private List<Project> projects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EnterpriseRequest> requests = new ArrayList<>();
 }
