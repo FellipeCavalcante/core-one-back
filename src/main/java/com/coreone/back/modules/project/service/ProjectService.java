@@ -11,7 +11,6 @@ import com.coreone.back.modules.project.dto.UpdateProjectRequest;
 import com.coreone.back.modules.project.mapper.ProjectMapper;
 import com.coreone.back.modules.project.repository.ProjectMemberRepository;
 import com.coreone.back.modules.project.repository.ProjectRepository;
-import com.coreone.back.modules.subSector.domain.SubSector;
 import com.coreone.back.modules.subSector.service.SubSectorService;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.user.service.UserService;
@@ -52,14 +51,12 @@ public class ProjectService {
 
         repository.save(project);
 
-        var response = new ProjectResponseDTO(
+        return new ProjectResponseDTO(
                 project.getId(),
                 project.getName(),
                 project.getDescription(),
                 project.getStatus()
         );
-
-        return response;
     }
 
     public String addUser(User user, UUID projectId, UUID userId) {

@@ -54,9 +54,7 @@ public class SubSectorService {
             projectSubSectorService.assign(request.getProjectId(), subSectorSaved);
         }
 
-        var response = mapper.toCreateSubSectorResponseDTO(subSectorSaved);
-
-        return response;
+        return mapper.toCreateSubSectorResponseDTO(subSectorSaved);
     }
 
     public List<GetSubSectorResponse> listAllSectorsSubSectors(UUID id) {
@@ -64,11 +62,9 @@ public class SubSectorService {
 
         var subSectors = repository.findAllBySectorId(sector.getId());
 
-        List<GetSubSectorResponse> response = subSectors.stream()
+        return subSectors.stream()
                 .map(mapper::toGetSubSectorResponse)
                 .collect(Collectors.toList());
-
-        return response;
     }
 
     public String addUserToSubSector(UUID subSectorId, UUID userId) {

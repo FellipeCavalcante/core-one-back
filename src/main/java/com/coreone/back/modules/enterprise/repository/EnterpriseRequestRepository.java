@@ -14,8 +14,4 @@ import java.util.UUID;
 public interface EnterpriseRequestRepository extends JpaRepository<EnterpriseRequest, UUID> {
 
     Page<EnterpriseRequest> findAllByEnterprise_Id(UUID enterpriseId, Pageable pageable);
-
-    List<EnterpriseRequest> findAllByUser_Id(UUID userId);
-
-    List<EnterpriseRequest> findAllByStatus(EnterpriseRequestStatus status);
 }

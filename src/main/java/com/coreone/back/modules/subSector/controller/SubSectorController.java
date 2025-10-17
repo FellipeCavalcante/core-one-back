@@ -1,13 +1,12 @@
 package com.coreone.back.modules.subSector.controller;
 
-import com.coreone.back.modules.subSector.dto.UpdateSubSectorRequest;
-import com.coreone.back.modules.user.domain.User;
+import com.coreone.back.common.util.AuthUtil;
 import com.coreone.back.modules.subSector.dto.CreateSubSectorRequestDTO;
 import com.coreone.back.modules.subSector.dto.CreateSubSectorResponseDTO;
 import com.coreone.back.modules.subSector.dto.GetSubSectorResponse;
-import com.coreone.back.modules.subSector.mapper.SubSectorMapper;
+import com.coreone.back.modules.subSector.dto.UpdateSubSectorRequest;
 import com.coreone.back.modules.subSector.service.SubSectorService;
-import com.coreone.back.common.util.AuthUtil;
+import com.coreone.back.modules.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,6 @@ import java.util.UUID;
 public class SubSectorController {
 
     private final SubSectorService service;
-    private final SubSectorMapper mapper;
     private final AuthUtil authUtil;
 
     @PostMapping("/create")
@@ -57,7 +55,7 @@ public class SubSectorController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/remove-user")
+    @DeleteMapping("/remove-user/{subSectorId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<String> removeUser(@PathVariable UUID subSectorId, @RequestBody UUID userId) {
         var response = service.removeUser(subSectorId, userId);

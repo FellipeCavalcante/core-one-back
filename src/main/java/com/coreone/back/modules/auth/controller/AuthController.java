@@ -1,13 +1,12 @@
 package com.coreone.back.modules.auth.controller;
 
-import com.coreone.back.modules.user.domain.enums.UserType;
-import com.coreone.back.modules.user.dto.CreateUserRequestDTO;
-import com.coreone.back.modules.user.dto.CreateUserResponseDTO;
-import com.coreone.back.common.errors.LoginRequestException;
 import com.coreone.back.modules.auth.dto.LoginRequestDTO;
 import com.coreone.back.modules.auth.dto.LoginResponseDTO;
 import com.coreone.back.modules.auth.mapper.AuthMapper;
 import com.coreone.back.modules.auth.service.AuthService;
+import com.coreone.back.modules.user.domain.enums.UserType;
+import com.coreone.back.modules.user.dto.CreateUserRequestDTO;
+import com.coreone.back.modules.user.dto.CreateUserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

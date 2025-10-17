@@ -12,13 +12,4 @@ public interface UserMapper {
     @Mapping(target = "subSector", source = "subSector.id")
     GetUserResponse toGetUserResponse(User user);
 
-//    @Named("mapSubSector")
-//    default SubSector mapSubSector(UUID subSectorId) {
-//        if (subSectorId == null) {
-//            return null;
-//        }
-//        SubSector subSector = new SubSector();
-//        subSector.setId(subSectorId);
-//        return subSector;
-//    }
 }

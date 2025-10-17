@@ -93,8 +93,7 @@ public class TaskService {
     }
 
     public Task getById(UUID id) {
-        var task = taskRepository.findById(id).orElseThrow();
-        return task;
+        return taskRepository.findById(id).orElseThrow();
     }
 
     public String delete(UUID id) {
@@ -118,8 +117,6 @@ public class TaskService {
 
         taskRepository.save(task);
 
-        var taskSaved = mapper.toGetTaskResponse(task);
-
-        return taskSaved;
+        return mapper.toGetTaskResponse(task);
     }
 }

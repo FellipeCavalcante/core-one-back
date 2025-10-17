@@ -57,9 +57,7 @@ public class SectorService {
 
         var sectors = repository.findAllByEnterpriseId(enterprise.getId(), pageable);
 
-        Page<GetSectorResponse> response = sectors.map(mapper::toGetSectorResponse);
-
-        return response;
+        return sectors.map(mapper::toGetSectorResponse);
     }
 
     public GetSectorResponse getSectorById(UUID id) {
