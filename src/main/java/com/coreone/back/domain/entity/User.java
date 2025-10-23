@@ -1,0 +1,88 @@
+package com.coreone.back.domain.entity;
+
+import com.coreone.back.domain.entity.enums.UserType;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class User implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    private String name;
+    private String password;
+    private String email;
+
+    @Enumerated(EnumType.STRING)
+    private UserType type;
+
+    @ManyToOne
+    @JoinColumn(name = "enterprise_id")
+    private Enterprise enterprise;
+
+    @ManyToOne
+    @JoinColumn(name = "sub_sector_id")
+    private SubSector subSector;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TaskMember> taskMemberships = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EnterpriseRequest> requests = new ArrayList<>();
+
+    @Column(name = "created_at", updatable = false)
+    private Timestamp createdAt;
+
+    @Column(name = "updated_at")
+    private Timestamp updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    public Set<Task> getTasks() {
+        return taskMemberships.stream()
+                .map(TaskMember::getTask)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Set.of(new SimpleGrantedAuthority("ROLE_" + this.type.name()));
+    }
+
+    @Override
+    public String getUsername() { return this.email; }
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+    @Override
+    public boolean isEnabled() { return true; }
+}
