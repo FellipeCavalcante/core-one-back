@@ -2,6 +2,8 @@ package com.coreone.back.modules.user.domain;
 
 import com.coreone.back.modules.enterprise.domain.Enterprise;
 import com.coreone.back.modules.enterprise.domain.EnterpriseRequest;
+import com.coreone.back.modules.folder.domain.Folder;
+import com.coreone.back.modules.note.domain.Note;
 import com.coreone.back.modules.subSector.domain.SubSector;
 import com.coreone.back.modules.task.domain.Task;
 import com.coreone.back.modules.task.domain.TaskMember;
@@ -48,6 +50,12 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EnterpriseRequest> requests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Folder> folders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Note> notes = new ArrayList<>();
 
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
