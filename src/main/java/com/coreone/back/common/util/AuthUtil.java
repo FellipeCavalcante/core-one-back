@@ -1,7 +1,7 @@
 package com.coreone.back.common.util;
 
-import com.coreone.back.modules.user.domain.User;
-import com.coreone.back.security.CustomUserDetails;
+import com.coreone.back.domain.entity.User;
+import com.coreone.back.infrastructure.security.CustomUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

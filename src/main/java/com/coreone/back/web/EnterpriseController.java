@@ -35,13 +35,13 @@ public class EnterpriseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(enterpriseApplicationService.createEnterprise(request));
     }
 
-    @GetMapping
-    public ResponseEntity<Page<GetEnterpriseResponse>> getAll(Pageable pageable) {
-
-        var response = mapper.toGetEnterpriseResponse();
-
-        return ResponseEntity.ok(enterpriseApplicationService.getAllEnterprises(pageable));
-    }
+//    @GetMapping
+//    public ResponseEntity<Page<GetEnterpriseResponse>> getAll(Pageable pageable) {
+//
+//        var response = mapper.toGetEnterpriseResponse();
+//
+//        return ResponseEntity.ok(enterpriseApplicationService.getAllEnterprises(pageable));
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {
