@@ -4,10 +4,7 @@ import com.coreone.back.modules.enterprise.domain.Enterprise;
 import com.coreone.back.modules.note.domain.Note;
 import com.coreone.back.modules.user.domain.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,6 +17,7 @@ import java.util.UUID;
 @Table(name = "folders")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Folder {
