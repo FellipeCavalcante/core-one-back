@@ -31,6 +31,7 @@ public class FolderService {
 
         folder.setPublic(request.isPublic() != null ? request.isPublic() : false);
 
+        repository.save(folder);
     }
 
     public Folder findById(UUID id) {
