@@ -1,6 +1,7 @@
 package com.coreone.back.modules.folder.service;
 
 import com.coreone.back.common.errors.NotFoundException;
+import com.coreone.back.common.errors.UnauthorizedException;
 import com.coreone.back.modules.enterprise.service.EnterpriseService;
 import com.coreone.back.modules.folder.controller.dto.CreateFolderDTO;
 import com.coreone.back.modules.folder.domain.Folder;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FolderService {
     private final FolderRepository repository;
-    private EnterpriseService enterpriseService;
+    private final EnterpriseService enterpriseService;
 
     public void create(User user, CreateFolderDTO request) {
         Folder folder = new Folder();
@@ -32,6 +33,16 @@ public class FolderService {
         folder.setPublic(request.isPublic() != null ? request.isPublic() : false);
 
         repository.save(folder);
+    }
+
+    public void delete(User user, UUID id) {
+        var found = findById(id);
+
+        if (!found.getUser().equals(user)) {
+            throw new UnauthorizedException("Cannot delete folder");
+        }
+
+        repository.deleteById(id);
     }
 
     public Folder findById(UUID id) {
