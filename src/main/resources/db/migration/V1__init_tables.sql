@@ -1,6 +1,21 @@
 CREATE
 EXTENSION IF NOT EXISTS "pgcrypto";
 
+CREATE TABLE plans
+(
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name            VARCHAR(100)   NOT NULL,
+    value           NUMERIC(10, 2) NOT NULL,
+    workstation_qtd INTEGER        NOT NULL -- 1, 2, 3, 4
+);
+
+CREATE TABLE workstation
+(
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name       VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE enterprise
 (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -9,11 +24,22 @@ CREATE TABLE enterprise
     created_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE workstation_enterprise
+(
+    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    workstation_id UUID NOT NULL,
+    enterprise_id  UUID NOT NULL,
+    activated_at   TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_workstation_enterprise_workstation FOREIGN KEY (workstation_id) REFERENCES workstation (id) ON DELETE CASCADE,
+    CONSTRAINT fk_workstation_enterprise_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE CASCADE,
+    CONSTRAINT uq_workstation_enterprise UNIQUE (workstation_id, enterprise_id)
+);
+
 CREATE TABLE sector
 (
-    id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    enterprise_id UUID NOT NULL,
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name          VARCHAR(100) NOT NULL,
+    enterprise_id UUID         NOT NULL,
     CONSTRAINT fk_sector_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE CASCADE
 );
 
@@ -42,16 +68,47 @@ CREATE TABLE users
     CONSTRAINT fk_user_sub_sector FOREIGN KEY (sub_sector_id) REFERENCES sub_sector (id) ON DELETE SET NULL
 );
 
+CREATE TABLE credit_card
+(
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    brand         VARCHAR(50),           -- Visa, MasterCard, etc.
+    last_digits   VARCHAR(4)   NOT NULL, -- Ex: '1234'
+    holder_name   VARCHAR(100) NOT NULL,
+    token         TEXT,                  -- token gateway
+    expiration_mm INTEGER      NOT NULL,
+    expiration_yy INTEGER      NOT NULL,
+    user_id       UUID         NOT NULL,
+    created_at    TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user_credit_card FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+CREATE TABLE payment
+(
+    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id        UUID           NOT NULL,
+    plan_id        UUID           NOT NULL,
+    credit_card_id UUID,
+    value          NUMERIC(10, 2) NOT NULL,
+    currency       VARCHAR(10)      DEFAULT 'BRL',
+    status         VARCHAR(30)      DEFAULT 'PENDING', -- PENDING, PAID, FAILED, CANCELED
+    transaction_id VARCHAR(255),                       -- gateway
+    created_at     TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
+    expired_at     TIMESTAMP,
+    CONSTRAINT fk_payment_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT fk_payment_plan FOREIGN KEY (plan_id) REFERENCES plans (id) ON DELETE CASCADE,
+    CONSTRAINT fk_payment_card FOREIGN KEY (credit_card_id) REFERENCES credit_card (id) ON DELETE SET NULL
+);
+
 CREATE TABLE tasks
 (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    title       VARCHAR(255) NOT NULL,
-    description TEXT         NOT NULL,
-    status      VARCHAR(50)  NOT NULL,
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title         VARCHAR(255) NOT NULL,
+    description   TEXT         NOT NULL,
+    status        VARCHAR(50)  NOT NULL,
     enterprise_id UUID,
-    created_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP,
-    finished_at TIMESTAMP,
+    created_at    TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP,
+    finished_at   TIMESTAMP,
     CONSTRAINT fk_user_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE SET NULL
 );
 
