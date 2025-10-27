@@ -6,7 +6,8 @@ CREATE TABLE plans
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name            VARCHAR(100)   NOT NULL,
     value           NUMERIC(10, 2) NOT NULL,
-    workstation_qtd INTEGER        NOT NULL -- 1, 2, 3, 4
+    workstation_qtd INTEGER        NOT NULL, -- 1, 2, 3
+    description     TEXT           NOT NULL
 );
 
 CREATE TABLE workstation
