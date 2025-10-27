@@ -1,6 +1,8 @@
 package com.coreone.back.modules.payment.domain;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import com.coreone.back.modules.user.domain.User;
@@ -35,7 +37,7 @@ public class Payment {
     private CreditCard creditCard;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private Double value;
+    private BigDecimal value;
 
     @Column(length = 10)
     private String currency = "BRL";

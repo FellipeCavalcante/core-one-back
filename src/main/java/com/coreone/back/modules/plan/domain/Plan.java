@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -24,7 +25,7 @@ public class Plan {
     private String name;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private Double value;
+    private BigDecimal value;
 
     @Column(name = "workstation_qtd", nullable = false)
     private Integer workstationQtd;

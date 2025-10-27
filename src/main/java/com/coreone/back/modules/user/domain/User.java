@@ -1,9 +1,11 @@
 package com.coreone.back.modules.user.domain;
 
 import com.coreone.back.modules.enterprise.domain.Enterprise;
-import com.coreone.back.modules.enterprise.domain.EnterpriseRequest;
 import com.coreone.back.modules.folder.domain.Folder;
 import com.coreone.back.modules.note.domain.Note;
+import com.coreone.back.modules.payment.domain.CreditCard;
+import com.coreone.back.modules.payment.domain.Payment;
+import com.coreone.back.modules.plan.domain.Plan;
 import com.coreone.back.modules.subSector.domain.SubSector;
 import com.coreone.back.modules.task.domain.Task;
 import com.coreone.back.modules.task.domain.TaskMember;
@@ -45,11 +47,18 @@ public class User implements UserDetails {
     @JoinColumn(name = "sub_sector_id")
     private SubSector subSector;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TaskMember> taskMemberships = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "plan_id")
+    private Plan plan;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EnterpriseRequest> requests = new ArrayList<>();
+    private List<CreditCard> creditCards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Payment> payments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TaskMember> taskMemberships = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Folder> folders = new ArrayList<>();
