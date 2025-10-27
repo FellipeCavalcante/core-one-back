@@ -16,8 +16,8 @@ import java.sql.Timestamp;
 @RequiredArgsConstructor
 public class NoteService {
     private final NoteRepository repository;
-    private EnterpriseService enterpriseService;
-    private FolderService folderService;
+    private final EnterpriseService enterpriseService;
+    private final FolderService folderService;
 
     public void save(User user, CreateNoteRequestDTO request) {
         if (request.enterpriseId() != null && !request.enterpriseId().equals(user.getEnterprise().getId())) {
