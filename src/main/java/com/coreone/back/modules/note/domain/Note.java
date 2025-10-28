@@ -1,8 +1,8 @@
 package com.coreone.back.modules.note.domain;
 
-import com.coreone.back.modules.enterprise.domain.Enterprise;
-import com.coreone.back.modules.folder.domain.Folder;
 import com.coreone.back.modules.user.domain.User;
+import com.coreone.back.modules.workstation.domain.Workstation;
+import com.coreone.back.modules.folder.domain.Folder;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -46,8 +46,8 @@ public class Note {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "enterprise_id")
-    private Enterprise enterprise;
+    @JoinColumn(name = "workstation_id")
+    private Workstation workstation;
 
     @ManyToOne
     @JoinColumn(name = "folder_id")

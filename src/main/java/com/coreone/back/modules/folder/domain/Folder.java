@@ -1,8 +1,8 @@
 package com.coreone.back.modules.folder.domain;
 
-import com.coreone.back.modules.enterprise.domain.Enterprise;
-import com.coreone.back.modules.note.domain.Note;
 import com.coreone.back.modules.user.domain.User;
+import com.coreone.back.modules.workstation.domain.Workstation;
+import com.coreone.back.modules.note.domain.Note;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -44,12 +44,12 @@ public class Folder {
     private Timestamp updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "enterprise_id")
-    private Enterprise enterprise;
-
-    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "workstation_id")
+    private Workstation workstation;
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes = new ArrayList<>();

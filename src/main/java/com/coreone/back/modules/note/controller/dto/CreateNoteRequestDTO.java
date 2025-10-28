@@ -14,6 +14,6 @@ public record CreateNoteRequestDTO(
         String content,
         Boolean isPublic,
         UUID folderId,
-        UUID enterpriseId
+        UUID workstationId
 ) {
 }

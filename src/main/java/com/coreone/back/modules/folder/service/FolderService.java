@@ -2,13 +2,13 @@ package com.coreone.back.modules.folder.service;
 
 import com.coreone.back.common.errors.NotFoundException;
 import com.coreone.back.common.errors.UnauthorizedException;
-import com.coreone.back.modules.enterprise.service.EnterpriseService;
 import com.coreone.back.modules.folder.controller.dto.CreateFolderDTO;
 import com.coreone.back.modules.folder.controller.dto.GetFolderResponseDTO;
 import com.coreone.back.modules.folder.controller.dto.UpdateFolderDTO;
 import com.coreone.back.modules.folder.domain.Folder;
 import com.coreone.back.modules.folder.repository.FolderRepository;
 import com.coreone.back.modules.user.domain.User;
+import com.coreone.back.modules.workstation.service.WorkstationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,16 +22,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FolderService {
     private final FolderRepository repository;
-    private final EnterpriseService enterpriseService;
+    private final WorkstationService workstationService;
 
     public void create(User user, CreateFolderDTO request) {
         Folder folder = new Folder();
         folder.setName(request.name());
         folder.setDescription(request.description());
 
-        if (request.enterpriseId() != null) {
-            var enterprise = enterpriseService.findById(request.enterpriseId());
-            folder.setEnterprise(enterprise);
+        if (request.workstationId() != null) {
+            var workstation = workstationService.getWorkstationById(request.workstationId());
+            folder.setWorkstation(workstation);
         }
 
         folder.setUser(user);

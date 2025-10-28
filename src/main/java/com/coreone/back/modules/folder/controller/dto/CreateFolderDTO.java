@@ -11,6 +11,6 @@ public record CreateFolderDTO(
         String name,
         String description,
         Boolean isPublic,
-        UUID enterpriseId
+        UUID workstationId
 ) {
 }
