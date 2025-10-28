@@ -17,6 +17,7 @@ import com.coreone.back.modules.task.repository.TaskRepository;
 import com.coreone.back.modules.task.repository.TaskSubSectorRepository;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.user.repository.UserRepository;
+import com.coreone.back.modules.workstation.service.WorkstationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,13 +40,16 @@ public class TaskService {
     private final TaskSubSectorRepository taskSubSectorRepository;
     private final ProjectTaskRepository projectTaskRepository;
     private final ProjectService projectService;
+    private final WorkstationService workstationService;
 
     @Transactional
-    public Task createTask(User user, CreateTaskRequestDTO request) {
+    public Task createTask(CreateTaskRequestDTO request, UUID workstationId) {
+        var workstation = workstationService.getWorkstationById(workstationId);
+
         Task task = new Task();
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
-        task.setEnterprise(user.getEnterprise());
+        task.setWorkstation(workstation);
         task.setStatus("PENDING");
 
         Task savedTask = taskRepository.save(task);
@@ -87,9 +91,9 @@ public class TaskService {
         return savedTask;
     }
 
-    public Page<Task> findAll(User requestingUser, int page, int size) {
+    public Page<Task> findAll(UUID workstationId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return taskRepository.findAllByEnterpriseIdFromSubSectors(requestingUser.getEnterprise().getId(), pageable);
+        return taskRepository.findAllByWorkstation_Id(workstationId, pageable);
     }
 
     public Task getById(UUID id) {

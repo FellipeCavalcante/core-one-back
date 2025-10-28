@@ -25,27 +25,28 @@ public class TaskController {
     private final TaskMapper mapper;
     private final AuthUtil authUtil;
 
-    @PostMapping("/create")
-    public ResponseEntity<CreateTaskResponseDTO> createTask(@RequestBody CreateTaskRequestDTO request) {
+    @PostMapping("/create/{workstationId}")
+    public ResponseEntity<CreateTaskResponseDTO> createTask(@PathVariable UUID workstationId, @RequestBody CreateTaskRequestDTO request) {
         User user = authUtil.getAuthenticatedUser();
 
         request.setCreatorId(user.getId());
 
-        var taskSaved = service.createTask(user, request);
+        var taskSaved = service.createTask(request, workstationId);
 
         var response = mapper.toCreateTaskResponseDTO(taskSaved, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping
+    @GetMapping("/{workstationId}")
     public ResponseEntity<Page<GetTaskResponse>> getAll(
+            @PathVariable UUID workstationId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
         User requestingUser = authUtil.getAuthenticatedUser();
 
-        var tasks = service.findAll(requestingUser, page, size);
+        var tasks = service.findAll(workstationId, page, size);
 
         Page<GetTaskResponse> response = tasks.map(mapper::toGetTaskResponse);
         return ResponseEntity.ok(response);
