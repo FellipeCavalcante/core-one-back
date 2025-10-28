@@ -29,9 +29,9 @@ public class EnterpriseController {
     @PostMapping("/create")
     public ResponseEntity<CreateEnterpriseResponseDTO> create(@RequestBody CreateEnterpriseRequestDTO request) {
         User user = authUtil.getAuthenticatedUser();
-        request.setCreatorId(user.getId());
 
-        var response = service.save(request);
+        var response = service.save(request, user);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -41,7 +41,9 @@ public class EnterpriseController {
             @RequestParam(defaultValue = "20") int size
     ) {
         var enterprises = service.getAll(page, size);
+
         Page<GetEnterpriseResponse> response = enterprises.map(mapper::toGetEnterpriseResponse);
+
         return ResponseEntity.ok(response);
     }
 
@@ -49,7 +51,9 @@ public class EnterpriseController {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<UpdateEnterpriseResponseDTO> update(@RequestBody UpdateEnterpriseRequestDTO request) {
         User user = authUtil.getAuthenticatedUser();
-        var response = service.update(request, user.getId());
+
+        var response = service.update(request, user);
+
         return ResponseEntity.ok(response);
     }
 

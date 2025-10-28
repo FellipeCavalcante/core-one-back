@@ -6,6 +6,8 @@ import com.coreone.back.modules.project.domain.Project;
 import com.coreone.back.modules.sector.domain.Sector;
 import com.coreone.back.modules.task.domain.Task;
 import com.coreone.back.modules.user.domain.User;
+import com.coreone.back.modules.user.domain.UserEnterprise;
+import com.coreone.back.modules.workstation.domain.Workstation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +18,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "enterprise")
@@ -23,8 +26,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class
-Enterprise {
+public class Enterprise {
 
     @Id
     @GeneratedValue
@@ -35,14 +37,18 @@ Enterprise {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
+
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
 
-    @OneToMany(mappedBy = "enterprise")
-    private List<Sector> sectors = new ArrayList<>();
+    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Workstation> workstations = new ArrayList<>();
 
     @OneToMany(mappedBy = "enterprise")
-    private List<User> users = new ArrayList<>();
+    private List<Sector> sectors = new ArrayList<>();
 
     @OneToMany(mappedBy = "enterprise")
     private List<Task> tasks = new ArrayList<>();
@@ -58,4 +64,13 @@ Enterprise {
 
     @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserEnterprise> members = new ArrayList<>();
+
+    public List<User> getUsers() {
+        return members.stream()
+                .map(UserEnterprise::getUser)
+                .collect(Collectors.toList());
+    }
 }

@@ -1,7 +1,7 @@
 package com.coreone.back.modules.sector.domain;
 
 import com.coreone.back.modules.subSector.domain.SubSector;
-import com.coreone.back.modules.enterprise.domain.Enterprise;
+import com.coreone.back.modules.workstation.domain.Workstation;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +28,6 @@ public class Sector {
     private List<SubSector> subSectors = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "enterprise_id")
-    private Enterprise enterprise;
+    @JoinColumn(name = "workstation_id", nullable = false)
+    private Workstation workstation;
 }

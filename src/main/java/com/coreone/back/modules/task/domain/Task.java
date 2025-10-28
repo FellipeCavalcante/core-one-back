@@ -1,8 +1,9 @@
 package com.coreone.back.modules.task.domain;
 
-import com.coreone.back.modules.enterprise.domain.Enterprise;
+import com.coreone.back.modules.workstation.domain.Workstation;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +30,10 @@ public class Task {
 
     private String status;
 
+    @ManyToOne
+    @JoinColumn(name = "workstation_id")
+    private Workstation workstation;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -43,10 +48,6 @@ public class Task {
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TaskMember> members = new HashSet<>();
-
-    @ManyToOne
-    @JoinColumn(name = "enterprise_id")
-    private Enterprise enterprise;
 
     public void addMember(TaskMember member) {
         members.add(member);

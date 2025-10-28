@@ -1,16 +1,18 @@
 package com.coreone.back.modules.enterprise.service;
 
 import com.coreone.back.modules.enterprise.domain.Enterprise;
+import com.coreone.back.modules.user.domain.User;
+import com.coreone.back.modules.user.domain.UserEnterprise;
 import com.coreone.back.modules.user.domain.enums.UserType;
 import com.coreone.back.modules.enterprise.dto.CreateEnterpriseRequestDTO;
 import com.coreone.back.modules.enterprise.dto.CreateEnterpriseResponseDTO;
 import com.coreone.back.modules.enterprise.dto.UpdateEnterpriseRequestDTO;
 import com.coreone.back.modules.enterprise.dto.UpdateEnterpriseResponseDTO;
-import com.coreone.back.common.errors.ConflictException;
 import com.coreone.back.common.errors.NotFoundException;
 import com.coreone.back.common.errors.UnauthorizedException;
 import com.coreone.back.modules.enterprise.mapper.EnterpriseMapper;
 import com.coreone.back.modules.enterprise.repository.EnterpriseRepository;
+import com.coreone.back.modules.user.repository.UserEnterpriseRepository;
 import com.coreone.back.modules.user.repository.UserRepository;
 import com.coreone.back.security.JwtService;
 import com.coreone.back.modules.log.service.LogService;
@@ -31,29 +33,30 @@ public class EnterpriseService {
     private final EnterpriseRepository repository;
     private final EnterpriseMapper mapper;
     private final UserRepository userRepository;
+    private final UserEnterpriseRepository userEnterpriseRepository;
     private final LogService logService;
     private final JwtService jwtService;
 
-    public CreateEnterpriseResponseDTO save(CreateEnterpriseRequestDTO request) {
-        var owner = userRepository.findById(request.getCreatorId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (owner.getEnterprise() != null) {
-            throw new ConflictException("User has been created enterprise");
-        }
-
+    public CreateEnterpriseResponseDTO save(CreateEnterpriseRequestDTO request, User owner) {
         Enterprise enterprise = new Enterprise();
         enterprise.setName(request.getName());
         enterprise.setDescription(request.getDescription());
+        enterprise.setOwner(owner);
         enterprise.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         enterprise.getUsers().add(owner);
 
-        owner.setEnterprise(enterprise);
         owner.setType(UserType.ADMIN);
 
         enterprise = repository.save(enterprise);
         userRepository.save(owner);
+
+        UserEnterprise ue = new UserEnterprise();
+        ue.setEnterprise(enterprise);
+        ue.setUser(owner);
+        ue.setRole("ADMIN");
+
+        userEnterpriseRepository.save(ue);
 
         UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(owner.getEmail())
@@ -82,13 +85,12 @@ public class EnterpriseService {
         return repository.findAll(pageable);
     }
 
-    public UpdateEnterpriseResponseDTO update(UpdateEnterpriseRequestDTO request, UUID userId) {
+    public UpdateEnterpriseResponseDTO update(UpdateEnterpriseRequestDTO request, User user) {
         var enterprise = findById(request.getId());
 
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+        UserEnterprise ue = userEnterpriseRepository.findByUser(user);
 
-        if (!user.getEnterprise().getId().equals(enterprise.getId())) {
+        if (!ue.getEnterprise().getId().equals(enterprise.getId())) {
             throw new UnauthorizedException("Unauthorized request");
         }
 

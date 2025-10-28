@@ -14,6 +14,8 @@ import com.coreone.back.modules.enterprise.mapper.EnterpriseRequestMapper;
 import com.coreone.back.modules.enterprise.repository.EnterpriseRequestRepository;
 import com.coreone.back.modules.enterprise.repository.EnterpriseRepository;
 import com.coreone.back.modules.user.domain.User;
+import com.coreone.back.modules.user.domain.UserEnterprise;
+import com.coreone.back.modules.user.repository.UserEnterpriseRepository;
 import com.coreone.back.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,7 @@ public class EnterpriseRequestService {
     private final EnterpriseRepository enterpriseRepository;
     private final EnterpriseRequestMapper mapper;
     private final UserService userService;
+    private final UserEnterpriseRepository userEnterpriseRepository;
 
     @Transactional
     public EnterpriseRequestResponseDTO createJoinRequest(User user, UUID enterpriseId, EnterpriseRequestCreateDTO requestDTO) {
@@ -50,7 +53,9 @@ public class EnterpriseRequestService {
     }
 
     public EnterpriseRequestResponseDTO createInvite(User inviter, UUID userId, UUID enterpriseId, EnterpriseRequestCreateDTO requestDTO) {
-        if (!inviter.getEnterprise().getId().equals(enterpriseId)) {
+        UserEnterprise ue = userEnterpriseRepository.findByUser(inviter);
+
+        if (!ue.getEnterprise().getId().equals(enterpriseId)) {
             throw new UnauthorizedException("Enterprise not found");
         }
 
@@ -58,7 +63,7 @@ public class EnterpriseRequestService {
 
         EnterpriseRequest er = new EnterpriseRequest();
         er.setUser(invitedUser);
-        er.setEnterprise(invitedUser.getEnterprise());
+        er.setEnterprise(ue.getEnterprise());
         er.setStatus(EnterpriseRequestStatus.PENDING);
         er.setType(EnterpriseRequestType.INVITE);
         er.setMessage(requestDTO.getMessage());
@@ -76,7 +81,9 @@ public class EnterpriseRequestService {
     public EnterpriseRequestResponseDTO updateStatus(UUID requestId, UpdateEnterpriseRequestStatusDTO requestStatusDTO, User user) {
         var request = findById(requestId);
 
-        if (!user.getEnterprise().getId().equals(request.getEnterprise().getId()) &&
+        UserEnterprise ue = userEnterpriseRepository.findByUser(user);
+
+        if (!ue.getEnterprise().getId().equals(request.getEnterprise().getId()) &&
                 !user.getId().equals(request.getUser().getId())) {
             throw new UnauthorizedException("Unauthorized request");
         }
@@ -97,12 +104,16 @@ public class EnterpriseRequestService {
         } else if (newStatus == EnterpriseRequestStatus.CANCELLED) {
             request.setStatus(EnterpriseRequestStatus.CANCELLED);
         } else if (newStatus == EnterpriseRequestStatus.ACCEPTED &&
-                user.getEnterprise().equals(request.getEnterprise())) {
+                ue.getEnterprise().equals(request.getEnterprise())) {
             request.setStatus(EnterpriseRequestStatus.ACCEPTED);
 
             var userInvited = userService.findById(request.getUser().getId());
-            userInvited.setEnterprise(request.getEnterprise());
-            userService.save(userInvited);
+
+            UserEnterprise newUserEnterprise =  new UserEnterprise();
+            newUserEnterprise.setUser(userInvited);
+            newUserEnterprise.setEnterprise(request.getEnterprise());
+
+            userEnterpriseRepository.save(newUserEnterprise);
         }
 
         repository.save(request);

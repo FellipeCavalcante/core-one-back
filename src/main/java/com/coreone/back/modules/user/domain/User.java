@@ -6,7 +6,7 @@ import com.coreone.back.modules.note.domain.Note;
 import com.coreone.back.modules.payment.domain.CreditCard;
 import com.coreone.back.modules.payment.domain.Payment;
 import com.coreone.back.modules.plan.domain.Plan;
-import com.coreone.back.modules.subSector.domain.SubSector;
+import com.coreone.back.modules.subSector.domain.SubSectorUser;
 import com.coreone.back.modules.task.domain.Task;
 import com.coreone.back.modules.task.domain.TaskMember;
 import com.coreone.back.modules.user.domain.enums.UserType;
@@ -40,14 +40,6 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserType type;
 
-    @ManyToOne
-    @JoinColumn(name = "enterprise_id")
-    private Enterprise enterprise;
-
-    @ManyToOne
-    @JoinColumn(name = "sub_sector_id")
-    private SubSector subSector;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserPlan> userPlans = new ArrayList<>();
 
@@ -65,6 +57,12 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserEnterprise> enterprisesMembership = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SubSectorUser> subSectorLinks = new HashSet<>();
 
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
@@ -91,7 +89,6 @@ public class User implements UserDetails {
                 .orElse(null);
     }
 
-
     public UserPlan getCurrentUserPlan() {
         return userPlans.stream()
                 .filter(userPlan -> Boolean.TRUE.equals(userPlan.getIsCurrent()))
@@ -100,10 +97,6 @@ public class User implements UserDetails {
                 .orElse(null);
     }
 
-    /**
-     * Add new plan for user
-     * remove plan if necessaire
-     */
     public void addPlan(Plan plan, String status) {
         userPlans.stream()
                 .filter(userPlan -> Boolean.TRUE.equals(userPlan.getIsCurrent()))
@@ -112,7 +105,6 @@ public class User implements UserDetails {
                     userPlan.setEndDate(LocalDateTime.now());
                 });
 
-        // create new plan
         UserPlan newUserPlan = new UserPlan();
         newUserPlan.setUser(this);
         newUserPlan.setPlan(plan);
@@ -135,9 +127,6 @@ public class User implements UserDetails {
         }
     }
 
-    /**
-     * Verify user plan
-     */
     public boolean hasActivePlan() {
         return getCurrentPlan() != null;
     }
@@ -148,13 +137,11 @@ public class User implements UserDetails {
                 .collect(Collectors.toList());
     }
 
-
     public List<UserPlan> getActivePlans() {
         return userPlans.stream()
                 .filter(userPlan -> "ACTIVE".equals(userPlan.getStatus()))
                 .collect(Collectors.toList());
     }
-
 
     public Set<Task> getTasks() {
         return taskMemberships.stream()
@@ -177,4 +164,16 @@ public class User implements UserDetails {
     public boolean isCredentialsNonExpired() { return true; }
     @Override
     public boolean isEnabled() { return true; }
+
+    public List<Enterprise> getEnterprises() {
+        return enterprisesMembership.stream()
+                .map(UserEnterprise::getEnterprise)
+                .collect(Collectors.toList());
+    }
+
+    public boolean isMemberOf(Enterprise enterprise) {
+        return enterprisesMembership.stream()
+                .anyMatch(ue -> ue.getEnterprise().equals(enterprise));
+    }
+
 }

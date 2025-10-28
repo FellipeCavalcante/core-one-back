@@ -10,11 +10,15 @@ CREATE TABLE plans
     description     TEXT           NOT NULL
 );
 
-CREATE TABLE workstation
+CREATE TABLE users
 (
-    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name       VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name          VARCHAR(100)        NOT NULL,
+    password      VARCHAR(100)        NOT NULL,
+    email         VARCHAR(100) UNIQUE NOT NULL,
+    type          VARCHAR(10),
+    created_at    TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP
 );
 
 CREATE TABLE enterprise
@@ -22,26 +26,38 @@ CREATE TABLE enterprise
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name        VARCHAR(100) NOT NULL,
     description TEXT         NOT NULL,
-    created_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
+    owner_id UUID NOT NULL,
+    created_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_enterprise_owner FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
-CREATE TABLE workstation_enterprise
+CREATE TABLE user_enterprise
 (
-    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    workstation_id UUID NOT NULL,
-    enterprise_id  UUID NOT NULL,
-    activated_at   TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_workstation_enterprise_workstation FOREIGN KEY (workstation_id) REFERENCES workstation (id) ON DELETE CASCADE,
-    CONSTRAINT fk_workstation_enterprise_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE CASCADE,
-    CONSTRAINT uq_workstation_enterprise UNIQUE (workstation_id, enterprise_id)
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id       UUID NOT NULL,
+    enterprise_id UUID NOT NULL,
+    role          VARCHAR(20) DEFAULT 'MEMBER', -- MEMBER, MANAGER, etc.
+    joined_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user_enterprise_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT fk_user_enterprise_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE CASCADE,
+    CONSTRAINT uq_user_enterprise UNIQUE (user_id, enterprise_id)
+);
+
+CREATE TABLE workstation
+(
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name       VARCHAR(100) NOT NULL,
+    enterprise_id UUID NOT NULL,
+    created_at TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_workstation_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE CASCADE
 );
 
 CREATE TABLE sector
 (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name          VARCHAR(100) NOT NULL,
-    enterprise_id UUID         NOT NULL,
-    CONSTRAINT fk_sector_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE CASCADE
+    workstation_id UUID NOT NULL,
+    CONSTRAINT fk_sector_workstation FOREIGN KEY (workstation_id) REFERENCES workstation (id) ON DELETE CASCADE
 );
 
 CREATE TABLE sub_sector
@@ -52,22 +68,19 @@ CREATE TABLE sub_sector
     CONSTRAINT fk_sub_sector_sector FOREIGN KEY (sector_id) REFERENCES sector (id) ON DELETE CASCADE
 );
 
--- users types ADMIN, MANAGER, CLIENT, WORKER
-
-CREATE TABLE users
+CREATE TABLE sub_sector_user
 (
-    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name          VARCHAR(100)        NOT NULL,
-    password      VARCHAR(100)        NOT NULL,
-    email         VARCHAR(100) UNIQUE NOT NULL,
-    type          VARCHAR(10),
-    enterprise_id UUID,
-    sub_sector_id UUID,
-    created_at    TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
-    updated_at    TIMESTAMP,
-    CONSTRAINT fk_user_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE SET NULL,
-    CONSTRAINT fk_user_sub_sector FOREIGN KEY (sub_sector_id) REFERENCES sub_sector (id) ON DELETE SET NULL
+    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sub_sector_id  UUID NOT NULL,
+    user_id        UUID NOT NULL,
+    CONSTRAINT fk_sub_sector_user_sub_sector FOREIGN KEY (sub_sector_id)
+        REFERENCES sub_sector (id) ON DELETE CASCADE,
+    CONSTRAINT fk_sub_sector_user_user FOREIGN KEY (user_id)
+        REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT uq_sub_sector_user UNIQUE (sub_sector_id, user_id)
 );
+
+-- users types ADMIN, MANAGER, CLIENT, WORKER
 
 CREATE TABLE credit_card
 (
@@ -106,11 +119,11 @@ CREATE TABLE tasks
     title         VARCHAR(255) NOT NULL,
     description   TEXT         NOT NULL,
     status        VARCHAR(50)  NOT NULL,
-    enterprise_id UUID,
+    workstation_id UUID,
     created_at    TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
     updated_at    TIMESTAMP,
     finished_at   TIMESTAMP,
-    CONSTRAINT fk_user_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE SET NULL
+    CONSTRAINT fk_user_workstation FOREIGN KEY (workstation_id) REFERENCES workstation (id) ON DELETE SET NULL
 );
 
 CREATE TABLE task_sub_sector

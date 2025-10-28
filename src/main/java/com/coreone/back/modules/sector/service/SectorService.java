@@ -3,7 +3,6 @@ package com.coreone.back.modules.sector.service;
 import com.coreone.back.common.errors.NotFoundException;
 import com.coreone.back.common.errors.UnauthorizedException;
 import com.coreone.back.common.errors.sectorlAlreadyExistsException;
-import com.coreone.back.modules.enterprise.service.EnterpriseService;
 import com.coreone.back.modules.sector.domain.Sector;
 import com.coreone.back.modules.sector.dto.CreateSectorRequestDTO;
 import com.coreone.back.modules.sector.dto.CreateSectorResponseDTO;
@@ -12,6 +11,9 @@ import com.coreone.back.modules.sector.dto.UpdateSectorRequest;
 import com.coreone.back.modules.sector.mapper.SectorMapper;
 import com.coreone.back.modules.sector.repository.SectorRepository;
 import com.coreone.back.modules.user.domain.User;
+import com.coreone.back.modules.user.domain.enums.UserType;
+import com.coreone.back.modules.user.repository.UserEnterpriseRepository;
+import com.coreone.back.modules.workstation.service.WorkstationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,17 +27,18 @@ import java.util.UUID;
 public class SectorService {
     private final SectorRepository repository;
     private final SectorMapper mapper;
-    private final EnterpriseService enterpriseService;
+    private final WorkstationService workstationService;
+    private final UserEnterpriseRepository userEnterpriseRepository;
 
-    public CreateSectorResponseDTO save(CreateSectorRequestDTO sector, User user) {
+    public CreateSectorResponseDTO save(CreateSectorRequestDTO sector, UUID workstationId) {
         assertSectorDosNotExists(sector.getName());
 
-        var enterprise = enterpriseService.findById(user.getEnterprise().getId());
+        var works = workstationService.getWorkstationById(workstationId);
 
         sector.setName(sector.getName().toUpperCase());
 
         var sectorMapped = mapper.toSector(sector);
-        sectorMapped.setEnterprise(enterprise);
+        sectorMapped.setWorkstation(works);
 
         var sectorSaved = repository.save(sectorMapped);
 
@@ -49,13 +52,13 @@ public class SectorService {
                 });
     }
 
-    public Page<GetSectorResponse> listAllEnterpriseSectors(User user, int page, int size) {
+    public Page<GetSectorResponse> listAllWorkstationSectors(UUID workstationId, int page, int size) {
 
-        var enterprise = enterpriseService.findById(user.getEnterprise().getId());
+        var workstation = workstationService.getWorkstationById(workstationId);
 
         Pageable pageable = PageRequest.of(page, size);
 
-        var sectors = repository.findAllByEnterpriseId(enterprise.getId(), pageable);
+        var sectors = repository.findAllByWorkstationId(workstation.getId(), pageable);
 
         return sectors.map(mapper::toGetSectorResponse);
     }
@@ -75,8 +78,16 @@ public class SectorService {
     public void update(User user, UUID sectorId, UpdateSectorRequest request) {
         var sector = findById(sectorId);
 
-        if (!user.getEnterprise().getId().equals(sector.getEnterprise().getId())) {
-            throw new UnauthorizedException("Unauthorized Access");
+        if (user.getType() != UserType.ADMIN) {
+
+            boolean belongsToEnterprise = userEnterpriseRepository.existsByUserIdAndEnterpriseId(
+                    user.getId(),
+                    sector.getWorkstation().getEnterprise().getId()
+            );
+
+            if (!belongsToEnterprise) {
+                throw new UnauthorizedException("Unauthorized Access");
+            }
         }
 
         if (request.getName() != null) {
@@ -87,12 +98,19 @@ public class SectorService {
     }
 
     public String delete(UUID id, User user) {
-
-        if (!user.getEnterprise().getId().equals(user.getId())) {
-            throw new UnauthorizedException("Unauthorized request");
-        }
-
         var sector = findById(id);
+
+        if (user.getType() != UserType.ADMIN) {
+
+            boolean belongsToEnterprise = userEnterpriseRepository.existsByUserIdAndEnterpriseId(
+                    user.getId(),
+                    sector.getWorkstation().getEnterprise().getId()
+            );
+
+            if (!belongsToEnterprise) {
+                throw new UnauthorizedException("Unauthorized request");
+            }
+        }
 
         repository.delete(sector);
 

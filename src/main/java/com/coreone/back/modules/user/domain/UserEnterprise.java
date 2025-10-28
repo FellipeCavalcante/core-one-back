@@ -1,4 +1,4 @@
-package com.coreone.back.modules.workstation.domain;
+package com.coreone.back.modules.user.domain;
 
 import com.coreone.back.modules.enterprise.domain.Enterprise;
 import jakarta.persistence.*;
@@ -7,28 +7,36 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
-@Table(name = "workstation")
+@Table(name = "user_enterprise")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Workstation {
+public class UserEnterprise {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false, length = 100)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "enterprise_id", nullable = false)
     private Enterprise enterprise;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private String role = "MEMBER";
+
+    @Column(name = "joined_at", updatable = false)
+    private Timestamp joinedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        joinedAt = new Timestamp(System.currentTimeMillis());
+    }
 }

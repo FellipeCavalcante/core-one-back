@@ -12,5 +12,5 @@ public interface SectorRepository extends JpaRepository<Sector, UUID> {
     Optional<Sector> findByName(String name);
 
 
-    Page<Sector> findAllByEnterpriseId(UUID enterpriseId, Pageable pageable);
+    Page<Sector> findAllByWorkstationId(UUID workstationId, Pageable pageable);
 }

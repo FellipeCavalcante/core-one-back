@@ -6,9 +6,7 @@ import com.coreone.back.modules.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "sub_sector")
@@ -34,4 +32,7 @@ public class SubSector {
 
     @OneToMany(mappedBy = "subSector", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaskSubSector> taskLinks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "subSector", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SubSectorUser> userLinks = new HashSet<>();
 }

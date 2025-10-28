@@ -5,11 +5,11 @@ CREATE TABLE folders
     description   TEXT,
     is_public     BOOLEAN          DEFAULT FALSE,
     user_id       UUID,
-    enterprise_id UUID,
+    workstation_id UUID,
     created_at    TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
     updated_at    TIMESTAMP,
     CONSTRAINT fk_folder_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    CONSTRAINT fk_folder_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE SET NULL
+    CONSTRAINT fk_folder_workstation FOREIGN KEY (workstation_id) REFERENCES workstation (id) ON DELETE SET NULL
 );
 
 CREATE TABLE notes
@@ -19,12 +19,12 @@ CREATE TABLE notes
     content       TEXT         NOT NULL,
     is_public     BOOLEAN          DEFAULT FALSE,
     user_id       UUID         NOT NULL,
-    enterprise_id UUID,
+    workstation_id UUID,
     folder_id     UUID,
     created_at    TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
     updated_at    TIMESTAMP,
     CONSTRAINT fk_note_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    CONSTRAINT fk_note_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE SET NULL,
+    CONSTRAINT fk_note_workstation FOREIGN KEY (workstation_id) REFERENCES workstation (id) ON DELETE SET NULL,
     CONSTRAINT fk_note_folder FOREIGN KEY (folder_id) REFERENCES folders (id) ON DELETE CASCADE
 );
 

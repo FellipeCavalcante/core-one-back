@@ -4,10 +4,10 @@ CREATE TABLE project
     name          VARCHAR     NOT NULL,
     description   TEXT        NOT NULL,
     status        VARCHAR(30) NOT NULL,
-    enterprise_id UUID,
+    workstation_id UUID,
     created_at    TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
     updated_at    TIMESTAMP,
-    CONSTRAINT fk_project_enterprise FOREIGN KEY (enterprise_id) REFERENCES enterprise (id) ON DELETE SET NULL
+    CONSTRAINT fk_project_workstation FOREIGN KEY (workstation_id) REFERENCES workstation (id) ON DELETE SET NULL
 );
 
 CREATE TABLE project_sub_sector

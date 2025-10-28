@@ -1,6 +1,6 @@
 package com.coreone.back.modules.project.domain;
 
-import com.coreone.back.modules.enterprise.domain.Enterprise;
+import com.coreone.back.modules.workstation.domain.Workstation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +26,10 @@ public class Project {
     private String description;
     private String status;
 
+    @ManyToOne
+    @JoinColumn(name = "workstation_id")
+    private Workstation workstation;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -40,8 +44,4 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProjectTask> tasks = new HashSet<>();
-
-    @ManyToOne
-    @JoinColumn(name = "enterprise_id")
-    private Enterprise enterprise;
 }
