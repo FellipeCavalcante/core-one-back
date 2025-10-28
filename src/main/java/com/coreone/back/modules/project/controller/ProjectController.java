@@ -21,12 +21,12 @@ public class ProjectController {
     private final ProjectService service;
     private final AuthUtil authUtil;
 
-    @PostMapping("/create")
+    @PostMapping("/create/{workstationId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<ProjectResponseDTO> create(@RequestBody CreateProjectRequestDTO request) {
+    public ResponseEntity<ProjectResponseDTO> create(@PathVariable UUID workstationId, @RequestBody CreateProjectRequestDTO request) {
         User user = authUtil.getAuthenticatedUser();
 
-        var project = service.save(user, request);
+        var project = service.save(user, request, workstationId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(project);
     }

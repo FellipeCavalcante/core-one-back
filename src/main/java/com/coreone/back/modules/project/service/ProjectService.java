@@ -14,6 +14,7 @@ import com.coreone.back.modules.project.repository.ProjectRepository;
 import com.coreone.back.modules.subSector.service.SubSectorService;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.user.service.UserService;
+import com.coreone.back.modules.workstation.service.WorkstationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +31,14 @@ public class ProjectService {
     private final SubSectorService subSectorService;
     private final ProjectMemberRepository projectMemberRepository;
     private final ProjectSubSectorService projectSubSectorService;
+    private final WorkstationService workstationService;
 
-    public ProjectResponseDTO save(User user, CreateProjectRequestDTO dto) {
+    public ProjectResponseDTO save(User user, CreateProjectRequestDTO dto, UUID workstationId) {
+        var workstation = workstationService.getWorkstationById(workstationId);
+
         var project = mapper.toDomain(dto);
-        project.setEnterprise(user.getEnterprise());
+
+        project.setWorkstation(workstation);
 
         if (dto.getSubSectors() != null) {
             dto.getSubSectors().forEach(subSectorId -> {
@@ -63,10 +68,6 @@ public class ProjectService {
         var userToAdd = userService.findById(userId);
         var project = findById(projectId);
 
-        if (!user.getEnterprise().equals(project.getEnterprise())) {
-            throw new UnauthorizedException("Unauthorized request by user");
-        }
-
         var pm = new ProjectMember();
         pm.setProject(project);
         pm.setUser(userToAdd);
@@ -78,10 +79,6 @@ public class ProjectService {
 
     public void update(User user, UUID id, UpdateProjectRequest request) {
         var project = findById(id);
-
-        if (!user.getEnterprise().equals(project.getEnterprise())) {
-            throw new UnauthorizedException("Unauthorized request by user");
-        }
 
         if (request.getName() != null) {
             project.setName(request.getName());
@@ -105,10 +102,6 @@ public class ProjectService {
 
     public void deleteProject(User requestingUser, UUID id) {
         var project = findById(id);
-
-        if (!requestingUser.getEnterprise().getId().equals(project.getEnterprise().getId())) {
-            throw new UnauthorizedException("Unauthorized request by user");
-        }
 
         repository.delete(project);
     }
