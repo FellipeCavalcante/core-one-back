@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,9 +48,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "sub_sector_id")
     private SubSector subSector;
 
-    @ManyToOne
-    @JoinColumn(name = "plan_id")
-    private Plan plan;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserPlan> userPlans = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CreditCard> creditCards = new ArrayList<>();
@@ -81,6 +81,80 @@ public class User implements UserDetails {
     protected void onUpdate() {
         updatedAt = new Timestamp(System.currentTimeMillis());
     }
+
+    public Plan getCurrentPlan() {
+        return userPlans.stream()
+                .filter(userPlan -> Boolean.TRUE.equals(userPlan.getIsCurrent()))
+                .filter(userPlan -> "ACTIVE".equals(userPlan.getStatus()))
+                .map(UserPlan::getPlan)
+                .findFirst()
+                .orElse(null);
+    }
+
+
+    public UserPlan getCurrentUserPlan() {
+        return userPlans.stream()
+                .filter(userPlan -> Boolean.TRUE.equals(userPlan.getIsCurrent()))
+                .filter(userPlan -> "ACTIVE".equals(userPlan.getStatus()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Add new plan for user
+     * remove plan if necessaire
+     */
+    public void addPlan(Plan plan, String status) {
+        userPlans.stream()
+                .filter(userPlan -> Boolean.TRUE.equals(userPlan.getIsCurrent()))
+                .forEach(userPlan -> {
+                    userPlan.setIsCurrent(false);
+                    userPlan.setEndDate(LocalDateTime.now());
+                });
+
+        // create new plan
+        UserPlan newUserPlan = new UserPlan();
+        newUserPlan.setUser(this);
+        newUserPlan.setPlan(plan);
+        newUserPlan.setStartDate(LocalDateTime.now());
+        newUserPlan.setStatus(status != null ? status : "ACTIVE");
+        newUserPlan.setIsCurrent(true);
+        newUserPlan.setCreatedAt(LocalDateTime.now());
+
+        userPlans.add(newUserPlan);
+    }
+
+    public void updateCurrentPlanStatus(String status) {
+        UserPlan current = getCurrentUserPlan();
+        if (current != null) {
+            current.setStatus(status);
+            if ("EXPIRED".equals(status) || "CANCELLED".equals(status)) {
+                current.setIsCurrent(false);
+                current.setEndDate(LocalDateTime.now());
+            }
+        }
+    }
+
+    /**
+     * Verify user plan
+     */
+    public boolean hasActivePlan() {
+        return getCurrentPlan() != null;
+    }
+
+    public List<UserPlan> getPlanHistory() {
+        return userPlans.stream()
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
+                .collect(Collectors.toList());
+    }
+
+
+    public List<UserPlan> getActivePlans() {
+        return userPlans.stream()
+                .filter(userPlan -> "ACTIVE".equals(userPlan.getStatus()))
+                .collect(Collectors.toList());
+    }
+
 
     public Set<Task> getTasks() {
         return taskMemberships.stream()

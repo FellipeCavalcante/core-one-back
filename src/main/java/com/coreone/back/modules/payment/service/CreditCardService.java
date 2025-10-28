@@ -1,11 +1,14 @@
 package com.coreone.back.modules.payment.service;
 
+import com.coreone.back.common.errors.NotFoundException;
 import com.coreone.back.modules.payment.controller.dto.AddCreditCardRequestDTO;
 import com.coreone.back.modules.payment.domain.CreditCard;
 import com.coreone.back.modules.payment.repository.CreditCardRepository;
 import com.coreone.back.modules.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,5 +26,11 @@ public class CreditCardService {
         creditCard.setUser(user);
 
         repository.save(creditCard);
+    }
+
+    public CreditCard getCreditCardById(UUID id) {
+        return repository.findById(id).orElseThrow(
+                () -> new NotFoundException("Credit card not found")
+        );
     }
 }
