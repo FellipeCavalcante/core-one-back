@@ -1,12 +1,14 @@
 package com.coreone.back.modules.payment.controller;
 
 import com.coreone.back.common.util.AuthUtil;
+import com.coreone.back.modules.payment.domain.Payment;
 import com.coreone.back.modules.payment.service.PaymentService;
 import com.coreone.back.modules.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,5 +27,14 @@ public class PaymentController {
         service.payRequest(paymentId, user, token);
 
         return ResponseEntity.ok("Payment processed successfully!");
+    }
+
+    @GetMapping("/my-payments")
+    public ResponseEntity<List<Payment>> getMyPayments() {
+        User user = authUtil.getAuthenticatedUser();
+
+        var response = service.myPayments(user);
+
+        return ResponseEntity.ok(response);
     }
 }

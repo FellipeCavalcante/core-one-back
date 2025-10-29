@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -60,6 +61,10 @@ public class PaymentService {
             save(payment);
             throw new BadRequestException("Payment failed");
         }
+    }
+
+    public List<Payment> myPayments(User user) {
+        return repository.findAllByUser(user);
     }
 
     public Payment getPayment(UUID paymentId) {

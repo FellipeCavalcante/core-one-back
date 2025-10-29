@@ -15,6 +15,7 @@ import com.coreone.back.modules.user.domain.UserPlan;
 import com.coreone.back.modules.user.repository.UserPlanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +41,7 @@ public class PlanService {
         )).toList();
     }
 
+    @Transactional
     public void selectPlan(User user, SelectPlanRequestDTO request) {
         var plan = getById(request.planId());
         var creditCard = creditCardService.getCreditCardById(request.creditCardId());
@@ -48,7 +50,7 @@ public class PlanService {
             throw new UnauthorizedException("Unauthorized");
         }
 
-        if (user.getCurrentPlan() != null) {
+        if (userPlanRepository.findCurrentPlan(user.getId()).isPresent()) {
             throw new BadRequestException("User has current plan");
         }
 
@@ -56,8 +58,8 @@ public class PlanService {
         userPlan.setPlan(plan);
         userPlan.setUser(user);
         userPlan.setStatus("PENDING");
+        userPlan.setStartDate(LocalDateTime.now());
         userPlan.setEndDate(LocalDateTime.now().plusMonths(1));
-
         userPlanRepository.save(userPlan);
 
         Payment payment = new Payment();
@@ -68,6 +70,7 @@ public class PlanService {
         payment.setTransactionId(UUID.randomUUID().toString()); // token
         paymentService.save(payment);
     }
+
 
     public Plan getById(UUID id) {
         return repository.findById(id).orElseThrow(
