@@ -118,10 +118,6 @@ public class SubSectorService {
 
         subSectorUserRepository.removeSubSectorUserByUser(user);
 
-        subSector.getUsers().remove(user);
-
-        userService.save(user);
-
         return "User removed";
     }
 }

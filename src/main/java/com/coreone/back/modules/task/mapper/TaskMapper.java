@@ -1,16 +1,26 @@
 package com.coreone.back.modules.task.mapper;
 
 import com.coreone.back.modules.task.domain.Task;
-import com.coreone.back.modules.task.domain.TaskMember;
-import com.coreone.back.modules.task.domain.TaskSubSector;
-import com.coreone.back.modules.task.dto.*;
+import com.coreone.back.modules.task.dto.CreateTaskRequestDTO;
+import com.coreone.back.modules.task.dto.CreateTaskResponseDTO;
+import com.coreone.back.modules.task.dto.GetTaskResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface TaskMapper {
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "workstation", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "finishedAt", ignore = true)
+    @Mapping(target = "subSectors", ignore = true)
+    @Mapping(target = "members", ignore = true)
     Task toTask(CreateTaskRequestDTO dto);
 
     default CreateTaskResponseDTO toCreateTaskResponseDTO(Task task, CreateTaskRequestDTO dto) {
@@ -21,13 +31,11 @@ public interface TaskMapper {
         response.setDescription(task.getDescription());
 
         response.setMemberIds(task.getMembers().stream()
-                .map(TaskMember::getUser)
-                .map(user -> user.getId())
+                .map(member -> member.getUser().getId())
                 .collect(Collectors.toList()));
 
         response.setSubSectorIds(task.getSubSectors().stream()
-                .map(TaskSubSector::getSubSector)
-                .map(subSector -> subSector.getId())
+                .map(subSector -> subSector.getSubSector().getId())
                 .collect(Collectors.toList()));
 
         return response;
@@ -44,7 +52,7 @@ public interface TaskMapper {
         response.setFinishedAt(task.getFinishedAt());
 
         response.setMembers(task.getMembers().stream().map(member -> {
-            TaskMemberResponse dto = new TaskMemberResponse();
+            var dto = new com.coreone.back.modules.task.dto.TaskMemberResponse();
             dto.setId(member.getId());
             dto.setUserId(member.getUser().getId());
             dto.setUserName(member.getUser().getName());
@@ -52,7 +60,7 @@ public interface TaskMapper {
         }).collect(Collectors.toList()));
 
         response.setSubSectors(task.getSubSectors().stream().map(subSector -> {
-            TaskSubSectorResponse dto = new TaskSubSectorResponse();
+            var dto = new com.coreone.back.modules.task.dto.TaskSubSectorResponse();
             dto.setId(subSector.getId());
             dto.setSubSectorId(subSector.getSubSector().getId());
             dto.setSubSectorName(subSector.getSubSector().getName());

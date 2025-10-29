@@ -1,7 +1,5 @@
 package com.coreone.back.modules.enterprise.domain;
 
-import com.coreone.back.modules.folder.domain.Folder;
-import com.coreone.back.modules.note.domain.Note;
 import com.coreone.back.modules.project.domain.Project;
 import com.coreone.back.modules.sector.domain.Sector;
 import com.coreone.back.modules.task.domain.Task;
@@ -47,23 +45,8 @@ public class Enterprise {
     @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Workstation> workstations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "enterprise")
-    private List<Sector> sectors = new ArrayList<>();
-
-    @OneToMany(mappedBy = "enterprise")
-    private List<Task> tasks = new ArrayList<>();
-
-    @OneToMany(mappedBy = "enterprise")
-    private List<Project> projects = new ArrayList<>();
-
     @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EnterpriseRequest> requests = new ArrayList<>();
-
-    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Folder> folders = new ArrayList<>();
-
-    @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Note> notes = new ArrayList<>();
 
     @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserEnterprise> members = new ArrayList<>();

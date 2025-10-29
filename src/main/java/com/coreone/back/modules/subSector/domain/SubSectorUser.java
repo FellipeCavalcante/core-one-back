@@ -8,22 +8,22 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "sub_sector_user",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"sub_sector_id", "user_id"})})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"sub_sector_id", "user_id"}))
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class SubSectorUser {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "sub_sector_id", nullable = false)
     private SubSector subSector;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

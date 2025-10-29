@@ -9,6 +9,7 @@ import java.util.UUID;
 public class GetSubSectorResponse {
     private UUID id;
     private String name;
+    private UUID sector;
     List<GetUserResponseBySubSector> users;
     List<GetTaskResponseBySubSector> tasks;
 }

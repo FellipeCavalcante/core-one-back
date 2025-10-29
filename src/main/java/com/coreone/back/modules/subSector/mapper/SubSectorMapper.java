@@ -15,12 +15,15 @@ public interface SubSectorMapper {
     // DTO -> Entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "sector", source = "sector")
+    @Mapping(target = "userLinks", ignore = true)
+    @Mapping(target = "taskLinks", ignore = true) // se existir
     SubSector toSubSector(CreateSubSectorRequestDTO dto);
 
     // Entity -> DTO
     @Mapping(target = "sector", source = "sector.id")
     CreateSubSectorResponseDTO toCreateSubSectorResponseDTO(SubSector subSector);
 
+    @Mapping(target = "sector", source = "sector.id")
     GetSubSectorResponse toGetSubSectorResponse(SubSector subSector);
 
     GetUserResponseBySubSector toGetSubSectorResponseBySubSector(SubSector subSector);
@@ -39,4 +42,3 @@ public interface SubSectorMapper {
         return sector.getId();
     }
 }
-

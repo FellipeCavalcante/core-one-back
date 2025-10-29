@@ -17,7 +17,6 @@ import java.util.UUID;
 @Table(name = "folders")
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Folder {
@@ -54,3 +53,4 @@ public class Folder {
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes = new ArrayList<>();
 }
+

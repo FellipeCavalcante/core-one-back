@@ -1,6 +1,7 @@
 package com.coreone.back.modules.workstation.domain;
 
 import com.coreone.back.modules.enterprise.domain.Enterprise;
+import com.coreone.back.modules.project.domain.Project;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -28,6 +31,9 @@ public class Workstation {
     @ManyToOne
     @JoinColumn(name = "enterprise_id", nullable = false)
     private Enterprise enterprise;
+
+    @OneToMany(mappedBy = "workstation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Project> projects = new HashSet<>();
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
