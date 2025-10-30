@@ -24,6 +24,13 @@ public class SectorController {
     private final SectorService service;
     private final AuthUtil authUtil;
 
+    /**
+     *
+     * @param request
+     * @param workstationId
+     * @return
+     * refactor
+     */
     @PostMapping("/create/{workstationId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<CreateSectorResponseDTO> create(@RequestBody CreateSectorRequestDTO request, @PathVariable UUID workstationId) {
