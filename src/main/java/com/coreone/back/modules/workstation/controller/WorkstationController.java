@@ -3,6 +3,7 @@ package com.coreone.back.modules.workstation.controller;
 import com.coreone.back.common.util.AuthUtil;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.workstation.controller.dto.CreateWorkstationRequestDTO;
+import com.coreone.back.modules.workstation.controller.dto.CreateWorkstationResponseDTO;
 import com.coreone.back.modules.workstation.domain.Workstation;
 import com.coreone.back.modules.workstation.service.WorkstationService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class WorkstationController {
     private final AuthUtil authUtil;
 
     @PostMapping("/create")
-    public ResponseEntity<Workstation> createWorkstation(@RequestBody CreateWorkstationRequestDTO request) {
+    public ResponseEntity<CreateWorkstationResponseDTO> createWorkstation(@RequestBody CreateWorkstationRequestDTO request) {
         User user = authUtil.getAuthenticatedUser();
 
         var response = service.createWorkstation(request, user);

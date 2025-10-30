@@ -1,6 +1,7 @@
 package com.coreone.back.modules.user.domain;
 
 import com.coreone.back.modules.plan.domain.Plan;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class UserPlan {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @ManyToOne

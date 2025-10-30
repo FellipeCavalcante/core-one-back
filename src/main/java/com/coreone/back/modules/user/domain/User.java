@@ -10,6 +10,7 @@ import com.coreone.back.modules.subSector.domain.SubSectorUser;
 import com.coreone.back.modules.task.domain.Task;
 import com.coreone.back.modules.task.domain.TaskMember;
 import com.coreone.back.modules.user.domain.enums.UserType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,6 +42,7 @@ public class User implements UserDetails {
     private UserType type;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<UserPlan> userPlans = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

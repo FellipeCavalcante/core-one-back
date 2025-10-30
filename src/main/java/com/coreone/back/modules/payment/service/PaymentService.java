@@ -46,7 +46,7 @@ public class PaymentService {
             payment.setExpiredAt(LocalDateTime.now().plusMonths(1));
             save(payment);
 
-            UserPlan userPlan = new UserPlan();
+            UserPlan userPlan = userPlanRepository.getUserPlanByUser(user);
             userPlan.setUser(user);
             userPlan.setPlan(payment.getPlan());
             userPlan.setStartDate(LocalDateTime.now());

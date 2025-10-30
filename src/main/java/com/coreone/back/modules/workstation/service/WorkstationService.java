@@ -5,7 +5,9 @@ import com.coreone.back.common.errors.NotFoundException;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.modules.user.domain.UserEnterprise;
 import com.coreone.back.modules.user.repository.UserEnterpriseRepository;
+import com.coreone.back.modules.user.repository.UserPlanRepository;
 import com.coreone.back.modules.workstation.controller.dto.CreateWorkstationRequestDTO;
+import com.coreone.back.modules.workstation.controller.dto.CreateWorkstationResponseDTO;
 import com.coreone.back.modules.workstation.domain.Workstation;
 import com.coreone.back.modules.workstation.repository.WorkstationRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +20,9 @@ import java.util.UUID;
 public class WorkstationService {
     private final WorkstationRepository repository;
     private final UserEnterpriseRepository  userEnterpriseRepository;
+    private final UserPlanRepository userPlanRepository;
 
-    public Workstation createWorkstation(CreateWorkstationRequestDTO requestDTO, User user) {
+    public CreateWorkstationResponseDTO createWorkstation(CreateWorkstationRequestDTO requestDTO, User user) {
         verifyWorkstations(user);
 
         UserEnterprise userEnterprise = userEnterpriseRepository.findByUser(user);
@@ -28,19 +31,27 @@ public class WorkstationService {
         workstation.setName(requestDTO.name());
         workstation.setEnterprise(userEnterprise.getEnterprise());
 
-        return repository.save(workstation);
+        var workstationSaved = repository.save(workstation);
+
+        return  new CreateWorkstationResponseDTO(
+              workstationSaved.getId(),
+                workstation.getName()
+        );
     }
 
-    public void verifyWorkstations(User user) {
-        var currentUserPlan = user.getCurrentUserPlan();
+    private void verifyWorkstations(User user) {
+        var currentUserPlan = userPlanRepository.findCurrentByUserId(user.getId())
+                .orElseThrow(() -> new BadRequestException("User does not have an active plan"));
 
-        if (currentUserPlan == null || !"ACTIVE".equals(currentUserPlan.getStatus())) {
+        if (!"ACTIVE".equals(currentUserPlan.getStatus())) {
             throw new BadRequestException("User does not have an active plan");
         }
 
         int maxWorkstations = currentUserPlan.getPlan().getWorkstationQtd();
 
-        int currentWorkstations = userEnterpriseRepository.countByUserId(user.getId());
+        var userEnterprise = userEnterpriseRepository.findByUser(user);
+
+        int currentWorkstations = repository.countByEnterpriseId(userEnterprise.getEnterprise().getId());
 
         if (currentWorkstations >= maxWorkstations) {
             throw new BadRequestException("You have reached the maximum number of workstations for your plan");
