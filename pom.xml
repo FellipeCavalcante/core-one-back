@@ -34,6 +34,7 @@
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 		<lombok.version>1.18.30</lombok.version>
+        <aws-sdk.version>2.25.0</aws-sdk.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -137,6 +138,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>${aws-sdk.version}</version>
+        </dependency>
+
 	</dependencies>
 
 	<build>

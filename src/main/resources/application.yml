@@ -5,6 +5,14 @@
       username: ${SMTP_USER}
       password: ${SMTP_PASS}
 
+  cloudflare:
+    r2:
+      account_id: ${R2_ACCOUNT_ID}
+      access_key: ${R2_ACCESS_KEY}
+      secret_key: ${R2_SECRET_KEY}
+      bucket: ${R2_BUCKET}
+      endpoint: https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com
+
   spring:
     application:
       name: back
