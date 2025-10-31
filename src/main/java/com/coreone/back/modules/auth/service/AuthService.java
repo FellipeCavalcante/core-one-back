@@ -1,6 +1,6 @@
 package com.coreone.back.modules.auth.service;
 
-import com.coreone.back.config.EmailService;
+import com.coreone.back.service.EmailService;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.common.errors.EmailAlreadyExistsException;
 import com.coreone.back.common.errors.LoginRequestException;
