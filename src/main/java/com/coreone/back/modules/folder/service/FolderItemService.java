@@ -1,5 +1,8 @@
 package com.coreone.back.modules.folder.service;
 
+import com.coreone.back.common.errors.NotFoundException;
+import com.coreone.back.common.errors.UnauthorizedException;
+import com.coreone.back.modules.folder.controller.dto.GetFolderItemResponseDTO;
 import com.coreone.back.modules.folder.controller.dto.UploadFolderItemRequestDTO;
 import com.coreone.back.modules.folder.domain.FolderItem;
 import com.coreone.back.modules.folder.repository.FolderItemRepository;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,6 +23,13 @@ public class FolderItemService {
     private final FolderService folderService;
     private final R2StorageService r2StorageService;
 
+    /**
+     *
+     * @param user
+     * @param folderId
+     * @param dto
+     * upload item to bucket
+     */
     public void uploadItem(User user, UUID folderId, UploadFolderItemRequestDTO dto) {
         var folder = folderService.findById(folderId);
 
@@ -40,6 +51,42 @@ public class FolderItemService {
     }
 
     /**
+     *  Delete item
+     */
+    public void deleteItem(User user, UUID itemId) {
+        var item = findById(itemId);
+
+        if (!item.getUserId().equals(user.getId())) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+
+        r2StorageService.deleteFile(item.getStorageKey());
+
+        repository.delete(item);
+    }
+
+    /**
+     *
+     * @param folderId
+     * @return list of items
+     */
+    public List<GetFolderItemResponseDTO> folderItems(UUID folderId) {
+        var folder = folderService.findById(folderId);
+
+        List<FolderItem> items = repository.findAlByFolderId(folder.getId());
+
+        return items.stream().map(item -> new GetFolderItemResponseDTO(
+                item.getId(),
+                item.getUserId(),
+                item.getFileName(),
+                item.getStorageKey(),
+                item.getContentType(),
+                item.getUrlPublic(),
+                item.getCreatedAt()
+        )).toList();
+    }
+
+    /**
      * Generate public URL
      */
     private String buildPublicUrl(String key) {
@@ -50,5 +97,12 @@ public class FolderItemService {
                 ? System.getenv("R2_BUCKET") + "/"
                 : "";
         return baseUrl + bucket + key;
+    }
+
+    private FolderItem findById(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(
+                        () -> new NotFoundException("Item not found")
+                );
     }
 }

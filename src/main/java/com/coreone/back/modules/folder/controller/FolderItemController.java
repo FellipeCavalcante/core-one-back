@@ -1,6 +1,7 @@
 package com.coreone.back.modules.folder.controller;
 
 import com.coreone.back.common.util.AuthUtil;
+import com.coreone.back.modules.folder.controller.dto.GetFolderItemResponseDTO;
 import com.coreone.back.modules.folder.controller.dto.UploadFolderItemRequestDTO;
 import com.coreone.back.modules.folder.service.FolderItemService;
 import com.coreone.back.modules.user.domain.User;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,5 +28,21 @@ public class FolderItemController {
 
         service.uploadItem(user, folderId, dto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{folderId}/by-folder")
+    public ResponseEntity<List<GetFolderItemResponseDTO>> folderItemsByFolder(@PathVariable UUID folderId) {
+        var response = service.folderItems(folderId);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/{itemId}/delete")
+    public ResponseEntity<Void> deleteItem(@PathVariable UUID itemId) {
+        User user = authUtil.getAuthenticatedUser();
+
+        service.deleteItem(user, itemId);
+
+        return ResponseEntity.noContent().build();
     }
 }
