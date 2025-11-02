@@ -58,6 +58,12 @@ public class WorkstationService {
         }
     }
 
+    public void delete(UUID id) {
+        var workstation = getWorkstationById(id);
+
+        repository.delete(workstation);
+    }
+
     public Workstation getWorkstationById(UUID id) {
         return repository.findById(id).orElseThrow(
                 () -> new NotFoundException("Workstation id " + id + " not found")
