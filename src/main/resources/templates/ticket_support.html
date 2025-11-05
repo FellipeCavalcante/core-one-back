@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmação de Recebimento de Ticket</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f6fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            margin: 30px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #0e387a;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .content {
+            padding: 30px;
+            text-align: left;
+        }
+
+        .content h2 {
+            color: #0e387a;
+            font-size: 20px;
+        }
+
+        .content p {
+            line-height: 1.6;
+            font-size: 16px;
+            color: #444;
+        }
+
+        .highlight {
+            color: #0e387a;
+            font-weight: bold;
+        }
+
+        .ticket-info {
+            background-color: #f0f3f8;
+            border-left: 4px solid #0e387a;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+
+        .ticket-info p {
+            margin: 8px 0;
+            font-size: 15px;
+        }
+
+        .footer {
+            background-color: #9fafca;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Confirmação de Ticket de Suporte</h1>
+    </div>
+
+    <div class="content">
+        <h2>Olá <span th:text="${name}">Usuário</span>,</h2>
+        <p>Recebemos o seu ticket de suporte com sucesso. 🎟️</p>
+
+        <div class="ticket-info">
+            <p><strong>Título:</strong> <span th:text="${title}">Título do ticket</span></p>
+            <p><strong>Tipo:</strong> <span th:text="${type}">Tipo do ticket</span></p>
+        </div>
+
+        <p>Nossa equipe já foi notificada e irá verificar o problema o mais rápido possível. Assim que houver uma atualização, entraremos em contato com você por este e-mail.</p>
+
+        <p>Agradecemos por entrar em contato com o <span class="highlight">Cone</span> e pela confiança em nossa equipe.</p>
+
+        <p>Atenciosamente,<br>
+            <span class="highlight">Equipe Cone — PanthroDev</span></p>
+    </div>
+
+    <div class="footer">
+        © 2025 PanthroDev — Todos os direitos reservados.
+    </div>
+</div>
+</body>
+</html>
