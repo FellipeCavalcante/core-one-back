@@ -2,12 +2,14 @@ package com.coreone.back.modules.support.service;
 
 import com.coreone.back.modules.support.domain.TicketSupport;
 import com.coreone.back.modules.support.dto.CreateTicketSupportDTO;
+import com.coreone.back.modules.support.dto.GetTicketsSupportResponseDTO;
 import com.coreone.back.modules.support.repository.TicketSupportRepository;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -37,5 +39,18 @@ public class TicketSupportService {
                 "ticket_support",
                 variables
         );
+    }
+
+    public List<GetTicketsSupportResponseDTO> listTicketsSupport() {
+        List<TicketSupport> tickets = repository.findAll();
+
+        return tickets.stream().map(ticket -> new GetTicketsSupportResponseDTO(
+                        ticket.getId(),
+                        ticket.getTitle(),
+                        ticket.getStatus(),
+                        ticket.getType(),
+                        ticket.getCreatedAt()
+                ))
+                .toList();
     }
 }
