@@ -1,6 +1,7 @@
 package com.coreone.back.modules.support.controller;
 
 import com.coreone.back.common.util.AuthUtil;
+import com.coreone.back.modules.support.domain.TicketSupport;
 import com.coreone.back.modules.support.dto.CreateTicketSupportDTO;
 import com.coreone.back.modules.support.dto.GetTicketsSupportResponseDTO;
 import com.coreone.back.modules.support.service.TicketSupportService;
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/support/ticket")
@@ -33,6 +35,23 @@ public class TicketSupportController {
     @PreAuthorize("hasAnyRole('BOSS')")
     public ResponseEntity<List<GetTicketsSupportResponseDTO>> listTickets() {
         var response = service.listTicketsSupport();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/my-tickets")
+    public ResponseEntity<List<GetTicketsSupportResponseDTO>> listMyTickets() {
+        User user = authUtil.getAuthenticatedUser();
+
+        var response = service.userTicketsSupport(user);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('BOSS')")
+    public ResponseEntity<TicketSupport> details(@PathVariable UUID id) {
+        var response = service.findById(id);
 
         return ResponseEntity.ok(response);
     }

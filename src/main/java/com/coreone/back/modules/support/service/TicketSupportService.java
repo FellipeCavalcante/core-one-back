@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +53,22 @@ public class TicketSupportService {
                         ticket.getCreatedAt()
                 ))
                 .toList();
+    }
+
+    public List<GetTicketsSupportResponseDTO> userTicketsSupport(User user) {
+        List<TicketSupport> ts = repository.findByUser(user);
+
+        return ts.stream().map(ticket -> new GetTicketsSupportResponseDTO(
+                        ticket.getId(),
+                        ticket.getTitle(),
+                        ticket.getStatus(),
+                        ticket.getType(),
+                        ticket.getCreatedAt()
+                ))
+                .toList();
+    }
+
+    public TicketSupport findById(UUID id) {
+        return repository.findById(id).orElseThrow();
     }
 }
