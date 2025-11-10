@@ -1,5 +1,6 @@
 package com.coreone.back.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -10,20 +11,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class R2StorageService {
+public class S3StorageService {
 
     private final S3Client s3Client;
     private final String bucket;
 
-    public R2StorageService(S3Client s3Client,
-                            @org.springframework.beans.factory.annotation.Value("${cloudflare.r2.bucket}") String bucket) {
+    public S3StorageService(S3Client s3Client,
+                            @Value("${aws.s3.bucket}") String bucket) {
         this.s3Client = s3Client;
         this.bucket = bucket;
     }
 
-    /**
-     * Upload
-     */
     public String uploadFile(MultipartFile file, String folderPath) {
         try {
             String key = folderPath != null && !folderPath.isEmpty()
@@ -40,15 +38,12 @@ public class R2StorageService {
 
             return key;
         } catch (IOException e) {
-            throw new RuntimeException("Upload file error", e);
+            throw new RuntimeException("Erro ao ler arquivo", e);
         } catch (S3Exception e) {
-            throw new RuntimeException("Send to R2 error: " + e.awsErrorDetails().errorMessage(), e);
+            throw new RuntimeException("Erro ao enviar para S3: " + e.awsErrorDetails().errorMessage(), e);
         }
     }
 
-    /**
-     * download
-     */
     public byte[] downloadFile(String key) {
         try {
             GetObjectRequest getRequest = GetObjectRequest.builder()
@@ -58,13 +53,10 @@ public class R2StorageService {
 
             return s3Client.getObjectAsBytes(getRequest).asByteArray();
         } catch (S3Exception e) {
-            throw new RuntimeException("Download error: " + e.awsErrorDetails().errorMessage(), e);
+            throw new RuntimeException("Erro ao baixar arquivo: " + e.awsErrorDetails().errorMessage(), e);
         }
     }
 
-    /**
-     * delete file
-     */
     public void deleteFile(String key) {
         try {
             DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
@@ -74,13 +66,10 @@ public class R2StorageService {
 
             s3Client.deleteObject(deleteRequest);
         } catch (S3Exception e) {
-            throw new RuntimeException("Delete file error: " + e.awsErrorDetails().errorMessage(), e);
+            throw new RuntimeException("Erro ao deletar arquivo: " + e.awsErrorDetails().errorMessage(), e);
         }
     }
 
-    /**
-     * list files
-     */
     public List<String> listFiles(String folderPath) {
         try {
             ListObjectsV2Request listRequest = ListObjectsV2Request.builder()
@@ -94,7 +83,7 @@ public class R2StorageService {
                     .map(S3Object::key)
                     .collect(Collectors.toList());
         } catch (S3Exception e) {
-            throw new RuntimeException("List error: " + e.awsErrorDetails().errorMessage(), e);
+            throw new RuntimeException("Erro ao listar arquivos: " + e.awsErrorDetails().errorMessage(), e);
         }
     }
 }

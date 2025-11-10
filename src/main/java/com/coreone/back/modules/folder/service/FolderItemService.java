@@ -7,7 +7,7 @@ import com.coreone.back.modules.folder.controller.dto.UploadFolderItemRequestDTO
 import com.coreone.back.modules.folder.domain.FolderItem;
 import com.coreone.back.modules.folder.repository.FolderItemRepository;
 import com.coreone.back.modules.user.domain.User;
-import com.coreone.back.service.R2StorageService;
+import com.coreone.back.service.S3StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class FolderItemService {
     private final FolderItemRepository repository;
     private final FolderService folderService;
-    private final R2StorageService r2StorageService;
+    private final S3StorageService s3StorageService;
 
     /**
      *
@@ -35,7 +35,7 @@ public class FolderItemService {
 
         MultipartFile file = dto.file();
 
-        String key = r2StorageService.uploadFile(file, folderId.toString());
+        String key = s3StorageService.uploadFile(file, folderId.toString());
 
         FolderItem item = new FolderItem();
         item.setFolderId(folder.getId());
@@ -60,7 +60,7 @@ public class FolderItemService {
             throw new UnauthorizedException("Unauthorized");
         }
 
-        r2StorageService.deleteFile(item.getStorageKey());
+        s3StorageService.deleteFile(item.getStorageKey());
 
         repository.delete(item);
     }
