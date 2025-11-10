@@ -9,6 +9,7 @@ import com.coreone.back.modules.folder.repository.FolderItemRepository;
 import com.coreone.back.modules.user.domain.User;
 import com.coreone.back.service.S3StorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,12 @@ public class FolderItemService {
     private final FolderItemRepository repository;
     private final FolderService folderService;
     private final S3StorageService s3StorageService;
+
+    @Value("${aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${aws.s3.region}")
+    private String region;
 
     /**
      *
@@ -90,13 +97,11 @@ public class FolderItemService {
      * Generate public URL
      */
     private String buildPublicUrl(String key) {
-        String baseUrl = System.getenv("R2_ACCOUNT_ID") != null
-                ? "https://" + System.getenv("R2_ACCOUNT_ID") + ".r2.cloudflarestorage.com/"
-                : "https://meu-bucket.r2.cloudflarestorage.com/";
-        String bucket = System.getenv("R2_BUCKET") != null
-                ? System.getenv("R2_BUCKET") + "/"
-                : "";
-        return baseUrl + bucket + key;
+        if (bucket == null || region == null) {
+            throw new IllegalStateException("Variables error: AWS_S3_BUCKET and AWS_S3_REGION");
+        }
+
+        return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + key;
     }
 
     private FolderItem findById(UUID id) {
