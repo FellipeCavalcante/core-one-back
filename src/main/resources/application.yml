@@ -43,6 +43,20 @@
             timeout: 5000
             writetimeout: 5000
 
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: "*"
+    endpoint:
+      prometheus:
+        enabled: true
+    metrics:
+      export:
+        prometheus:
+          enabled: true
+
+
   logging:
     level:
       com.dev.fellipe.user_service: debug
