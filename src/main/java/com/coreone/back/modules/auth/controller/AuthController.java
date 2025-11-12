@@ -7,6 +7,7 @@ import com.coreone.back.modules.auth.service.AuthService;
 import com.coreone.back.modules.user.domain.enums.UserType;
 import com.coreone.back.modules.user.dto.CreateUserRequestDTO;
 import com.coreone.back.modules.user.dto.CreateUserResponseDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class AuthController {
     private final AuthMapper mapper;
 
     @PostMapping("/register")
-    public ResponseEntity<CreateUserResponseDTO> register(@RequestBody CreateUserRequestDTO request) {
+    public ResponseEntity<CreateUserResponseDTO> register(@Valid @RequestBody CreateUserRequestDTO request) {
         if (request.getPassword() == null) {
             return ResponseEntity.badRequest().body(null);
         }
